@@ -1,0 +1,261 @@
+<style lang="less">
+  @primary-color: #ff2a48;
+
+  .detail{
+    background-color: #f5f5f5;
+    .swiper-container{
+      height: 750rpx;
+      .swiper-slide{
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .slide-image{
+      width: 750rpx;
+      height: 750rpx;
+    }
+
+    .product-info{
+      padding:40rpx 24rpx 36rpx;
+      margin-bottom: 20rpx;
+      background-color: #fff;
+      .price-panel{
+        margin-bottom: 34rpx;
+        .price-tag{
+          font-size: 28rpx;
+          color: @primary-color;
+        }
+        .price-now{
+          font-size: 40rpx;
+          color: @primary-color;
+        }
+        .price-old{
+          font-size: 28rpx;
+          color: #999;
+          text-decoration: line-through;
+        }
+        .sold{
+          float: right;
+          font-size: 26rpx;
+          color: #999;
+          margin-top: 10rpx;
+        }
+      }
+      .info-panel{
+
+        .free-ship{
+          color: #fd723c;
+          border-radius: 2rpx;
+          font-size: 24rpx;
+          padding: 4rpx;
+          background-color: #fed4c4;
+          position: relative;
+          top: -4rpx;
+        }
+        .title{
+          font-size: 30rpx;
+          color: #444;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 700;
+        }
+        .recommend{
+          color: #fd723c;
+          font-size: 26rpx;
+          margin-top: 24rpx;
+        }
+      }
+    }
+
+    .product-intro{
+      background-color: #fff;
+      .intro-tabs{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30rpx;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        .tab {
+          margin: 0 6rpx;
+          padding: 20rpx 10rpx;
+          &.active {
+            color: @primary-color;
+            border-bottom: 4rpx solid @primary-color;
+          }
+        }
+      }
+      .intro-detail{
+        padding: 20rpx;
+        .image{
+          width: 100%;
+        }
+      }
+      .intro-comment {
+        .comment{
+          padding: 35rpx 24rpx;
+          font-size: 26rpx;
+          border-bottom: 1rpx solid #eee;
+          .buyer {
+            color: #666;
+            margin-bottom:20rpx;
+            .time {
+              float: right;
+              color: #aaa;
+            }
+          }
+          .comment {
+            font-size: 28rpx;
+            color: #444;
+          }
+        }
+
+      }
+    }
+
+    .detail-footer {
+      z-index: 100;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: right;
+      height: 98rpx;
+      display: flex;
+      justify-content: flex-end;
+      background-color: #fff;
+      border-top: 1px solid #eee;
+      font-size: 28rpx;
+      color: #fff;
+      .image{
+        height: 100%;
+        width: 320rpx;
+      }
+      .coupon {
+        width: 200rpx;
+        background-color: #fd723c;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .coupon-name{
+          font-size: 26rpx;
+        }
+        .coupon-price{
+          font-size: 32rpx;
+        }
+      }
+      .buy {
+        width: 230rpx;
+        background-color: @primary-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+</style>
+<template>
+  <view class="detail">
+    <swiper class="swiper-container" indicator-dots="{{true}}" autoplay="{{false}}">
+      <block wx:for="{{product.tbImgList}}" wx:key="index">
+        <swiper-item class="swiper-slide">
+          <image src="{{item}}" class="slide-image"/>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <view class="product-info">
+      <view class="price-panel">
+        <text class="price-tag">¥</text>
+        <text class="price-now">{{product.price}}</text>
+        <text class="price-old">¥{{product.originPrice}}</text>
+        <text class="coupon" wx:if="{{product.isHasActivity}}">{{product.activityPrice }}元优惠券</text>
+        <text class="sold">已购 {{product.saleCount}} 件</text>
+      </view>
+      <view class="info-panel">
+        <MB :source.sync="product.source"></MB>
+        <text class="free-ship" wx:if="{{product.isPinkage}}">包邮</text>
+        <text class="title">{{product.title}}</text>
+        <view class="recommend" wx:if="product.recommend">小编推荐:{{product.recommend}}
+        </view>
+      </view>
+    </view>
+
+    <view class="product-intro">
+      <view class="intro-tabs">
+        <text class="tab {{introShow=='detail'?'active':''}}"  @tap="toggleIntroShow('detail')">商品详情</text>
+        <text class="tab {{introShow=='comment'?'active':''}}" @tap="toggleIntroShow('comment')">商品评论</text>
+      </view>
+      <view class="intro-detail" wx:if="{{introShow === 'detail'}}">
+        <repeat for="{{product.detailInfoList}}" key="index" index="index" item="item">
+          <image class="image" src="{{item}}"/>
+        </repeat>
+      </view>
+
+      <view class="intro-comment" wx:if="{{introShow === 'comment' && product.commentInfoList.length > 0}}">
+        <repeat for="{{product.commentInfoList}}" key="index" index="index" item="item">
+          <view class="comment">
+            <view class="buyer">{{item.buyerNick}} <text class="time">{{item.createTime}}</text></view>
+            <view class="content">{{item.comment}}</view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+
+    <view class="detail-footer">
+      <image class="image" src="../images/detail_footer.jpg"></image>
+
+      <view class="coupon"  wx:if="{{!product.isHasActivity}}">
+        <text>加入购物车</text>
+      </view>
+
+      <view class="coupon"  wx:if="{{product.isHasActivity}}">
+        <text class="coupon-name">优惠券</text>
+        <text class="coupon-price">{{product.activityPrice}}元</text>
+      </view>
+
+      <view class="buy">{{ product.isHasActivity? '领券抢购':'立即抢购' }}</view>
+    </view>
+
+    <button @tap="fetchDetail()">fetch</button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import MB from '../components/product/MB'
+  import api from '../mixins/api'
+
+  export default class DetailPage extends wepy.page {
+    config = {}
+
+    components = {
+      MB: MB
+    }
+
+    data = {
+      product: {},
+      introShow: 'detail'
+    }
+
+    computed = {}
+
+    methods = {
+      toggleIntroShow(tab){
+        this.introShow = tab
+      },
+    }
+
+    events = {}
+
+    async onLoad (option) {
+      console.info('详情页加载完成')
+      console.log(option.id)
+      const id = option.id
+      const res = api.fetchDetail(id)
+      console.log('详情onLoad',res)
+    }
+  }
+</script>

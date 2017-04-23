@@ -1,0 +1,149 @@
+<style lang="less">
+  .search{
+    padding: 20rpx;
+    border-bottom: 1rpx solid #e8e8ed;
+    .input-view{
+      background-color: #e8e8ed;
+      width: 570rpx;
+      height: 60rpx;
+      display: inline-block;
+      font-size: 30rpx;
+      border-radius: 30rpx;
+      padding: 0 10rpx;
+      .icon{
+        width: 40rpx;
+        position: relative;
+        top: 4rpx;
+        left: 4rpx;
+      }
+      .input{
+        width: 520rpx;
+        display: inline-block;
+        margin-top: 8rpx;
+      }
+    }
+    .button{
+      width: 100rpx;
+      height: 60rpx;
+      display: inline-block;
+      margin-left: 20rpx;
+      font-size: 26rpx;
+      padding: 0;
+    }
+  }
+
+  .search-key{
+    padding: 30rpx 20rpx;
+    .key-title{
+      font-size: 30rpx;
+      color: #333;
+    }
+    .key-panel{
+      margin: 30rpx 0 70rpx;
+
+    }
+    .key{
+      background-color: #e8e8ed;
+      color: #333;
+      font-size: 26rpx;
+      padding: 10rpx 20rpx;
+      border-radius: 4rpx;
+      margin-right: 10rpx;
+      margin-bottom: 10rpx;
+      display: inline-block;
+    }
+  }
+</style>
+<template>
+  <view class="container">
+    <view class="search">
+      <form bindsubmit="onSubmit">
+        <view class="input-view">
+          <icon class="icon" type="search" size="14" color="#b2b2b2"/>
+          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm	="onSubmit" auto-focus/>
+        </view>
+        <button class="button" formType="submit">搜索</button>
+      </form>
+    </view>
+    <view class="search-key" wx:if="{{!isShowList}}">
+      <text class="key-title">历史搜索</text>
+      <view class="key-panel">
+        <text class="key">裤子</text>
+      </view>
+
+      <text class="key-title">热门搜索</text>
+      <view class="key-panel">
+        <repeat for="{{hotSearchList}}" key="index" index="index" item="item">
+          <view class="key" @tap="">{{item}}</view>
+        </repeat>
+      </view>
+    </view>
+
+    <view class="product-list"  wx:if="{{isShowList}}">
+      <List :list.sync="productList"></List>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import SearchBar from '../components/search/SearchBar'
+  import List from '../components/product/List'
+
+  export default class SearchPage extends wepy.page {
+    config = {}
+
+    components = {
+      SearchBar: SearchBar,
+      List: List,
+    }
+
+    data = {
+      productList: [],
+      hotSearchList: [],
+      isShowList: false
+    }
+
+    computed = {}
+
+    methods = {
+      onSubmit(e) {
+        const keyword = e.detail.value.keyword
+
+        const params = JSON.stringify({
+          appKey: 'zdnz',
+          itemSearchBy: {
+            keyword: keyword,
+            offset: 0,
+            pageSize: 10
+          }
+        })
+        wepy.request('https://pre.adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(params))
+          .then(res => {
+            const data = res.data.data.itemsByKeyRes.data
+            console.log(data)
+            this.productList = data
+            this.isShowList = true
+          })
+      },
+
+      fetchKeyword(keyword) {
+
+      }
+    }
+
+    events = {}
+
+    onLoad () {
+      console.info('搜索页加载完成')
+      this.isShowList = false
+
+      wepy.request('http://pre.adbaitai.com/public/1.0/h5/weixin/hot?data=')
+        .then(res => {
+          const data = res.data.data.hotSearch
+          console.log(data)
+          this.hotSearchList = data
+        })
+    }
+  }
+</script>

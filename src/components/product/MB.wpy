@@ -1,0 +1,39 @@
+<style lang="less">
+  .mb{
+    display: inline-block;
+    .source-image{
+      width: 30rpx;
+      height: 30rpx;
+    }
+  }
+</style>
+<template>
+  <view class="mb">
+    <image wx:if="{{source==='TM'}}" class="source-image" src="../images/tm.png"></image>
+    <image wx:if="{{source==='TB'}}" class="source-image" src="../images/tb.png"></image>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class MB extends wepy.page {
+    config = {}
+
+    components = {}
+
+    data = {
+      source: ''
+    }
+
+    computed = {}
+
+    methods = {}
+
+    events = {}
+
+    onLoad () {
+      console.log(this.source)
+    }
+  }
+</script>

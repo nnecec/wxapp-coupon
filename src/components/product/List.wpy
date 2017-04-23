@@ -1,0 +1,35 @@
+<!--http://rapapi.org/mockjsdata/17112/demo/category/list-->
+<style type="less">
+  .list {
+    background-color: #fff;
+    margin-top: 20rpx;
+  }
+</style>
+<template>
+  <view class="list">
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <Product :product.sync="item"/>
+    </repeat>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Product from './Product'
+
+  export default class List extends wepy.component {
+    props = {
+      list: {}
+    }
+
+    components = {
+      Product: Product
+    }
+    methods = {}
+
+    onLoad () {
+      console.info('List 加载完成')
+      console.log(this.list)
+    }
+  }
+
+</script>

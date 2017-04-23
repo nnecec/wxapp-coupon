@@ -1,0 +1,125 @@
+<style type="less">
+
+  @price: #fe2947;
+  .product {
+    border-bottom: 1rpx solid #e6e6e6;
+    display: flex;
+    padding: 20rpx;
+    &.hover {
+      background-color: #f5f5f5;
+    }
+    .product-image {
+      width: 280rpx;
+      position: relative;
+      .image {
+        width: 280rpx;
+        height: 280rpx;
+      }
+      .new,
+      .popular {
+        color: #fff;
+        font-size: 20rpx;
+        position: absolute;
+        right: 10rpx;
+        top: 0;
+        padding: 4rpx;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 100%;
+          display: inline-block;
+          width: 0;
+          height: 0;
+          border-left: 24rpx solid transparent;
+          border-right: 24rpx solid transparent;
+          border-top: 4rpx solid #3cc3c1;
+        }
+      }
+      .new {
+        background-color: #3cc3c1;
+      }
+      .popular {
+        background-color: #fe2947;
+        &::after {
+          border-top: 4rpx solid #fe2947;
+        }
+      }
+    }
+
+    .product-info {
+      padding: 20rpx;
+      position: relative;
+      .title {
+        font-size: 30rpx;
+      }
+
+      .price-panel {
+        margin: 0.3rem 0 0;
+        .price-name {
+          font-size: 26rpx;
+          color: #999;
+        }
+        .price-tag {
+          font-size: 26rpx;
+          color: @price;
+          font-weight: 700;
+        }
+        .price-now {
+          font-size: 46rpx;
+          color: @price;
+        }
+        .price-old {
+          font-size: 24rpx;
+          color: #999;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="product" hover-class="hover" @tap="viewDetail()">
+    <view class="product-image">
+      <image class="image" mode="aspectFill" src="{{product.picUrl}}"></image>
+      <text class="new" wx:if="{{product.isNew}}">上新</text>
+      <text class="popular" wx:if="{{product.isPopular}}">爆款</text>
+    </view>
+    <view class="product-info">
+      <text class="title">{{product.title}}</text>
+      <view class="price-panel">
+        <text class="price-tag">¥ </text>
+
+        <text class="price-now">{{product.price}}</text>
+        <text class="price-old">¥ {{product.originPrice}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class HalfProduct extends wepy.component {
+    props = {
+      product: Object
+    }
+
+    components = {}
+
+    methods = {
+      viewDetail(id) {
+        console.log('进入详情页')
+        console.log(this.product.id)
+        const self = this
+        wx.navigateTo({
+          url: '../pages/detail?id=' + self.product.id
+        })
+      }
+    }
+
+    onLoad () {
+      console.info('Product 加载完成')
+      console.log(this.productInfo)
+    }
+  }
+</script>

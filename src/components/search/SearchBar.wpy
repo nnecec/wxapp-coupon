@@ -1,0 +1,57 @@
+<style type="less">
+  .search{
+    padding: 20rpx;
+    border-bottom: 1rpx solid #e8e8ed;
+    .input-view{
+      background-color: #e8e8ed;
+      width: 570rpx;
+      height: 60rpx;
+      display: inline-block;
+      font-size: 30rpx;
+      border-radius: 30rpx;
+      padding: 0 10rpx;
+      .icon{
+        width: 40rpx;
+        position: relative;
+        top: 4rpx;
+        left: 4rpx;
+      }
+      .input{
+        width: 520rpx;
+        display: inline-block;
+        margin-top: 8rpx;
+      }
+    }
+    .button{
+      width: 100rpx;
+      height: 60rpx;
+      display: inline-block;
+      margin-left: 20rpx;
+      font-size: 26rpx;
+      padding: 0;
+    }
+  }
+</style>
+<template>
+  <view class="search">
+    <view class="input-view">
+      <icon class="icon" type="search" size="14" color="#b2b2b2"/>
+      <input class="input" placeholder="输入关键词搜索商品" auto-focus/>
+    </view>
+    <button class="button" @tap="search">搜索</button>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class SearchBar extends wepy.component {
+    props = {}
+
+    components = {}
+    methods = {
+      search() {
+        console.log('开始搜索')
+      }
+    }
+  }
+</script>
