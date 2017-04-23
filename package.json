@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "clipboard": "^1.6.1",
     "wepy": "^1.5.2",
     "wepy-async-function": "^1.4.4",
     "wepy-com-toast": "^1.0.2"

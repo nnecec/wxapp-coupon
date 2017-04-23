@@ -3,6 +3,7 @@
   @grey-color: #888;
   .home {
     background-color: #f5f5f5;
+    height: 100%;
     .search-panel {
       background-color: @primary-color;
       padding: 50rpx 20rpx;
@@ -31,12 +32,17 @@
       <navigator class="search-link" url="./search">搜索心仪商品</navigator>
     </view>
 
-    <List :list.sync="productList"/>
+    <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
+      <List :list.sync="productList"/>
+    </scroll-view>
+
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+
+  import api from '../mixins/api'
 
   import SearchBar from '../components/search/SearchBar'
   import List from '../components/product/List'
@@ -51,24 +57,48 @@
 
     data = {
       productList: [],
-      test: '测试数据'
+      offset: 0
     }
 
     computed = {}
 
-    methods = {}
+    methods = {
+      upper (e) {
+        console.log(e)
+      },
+
+      lower (e) {
+        console.log(e)
+      },
+
+      scroll (e) {
+        console.log(e)
+      }
+    }
 
     events = {}
 
-    onLoad () {
-      wepy.request('https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=%7B%22topics%22%3A%5B%7B%22promotionId%22%3A%2211%22%2C%22id%22%3A%2215%22%2C%22offset%22%3A0%2C%22pageSize%22%3A20%7D%5D%7D')
-        .then((res) => {
-          console.log('首页list',res)
-          const data = res.data.data.topicRes.data[0].items
-          console.log(data)
-
-          this.productList = data
-        })
+    async onLoad () {
+      this.fetchList()
     }
+
+    async fetchList () {
+      const data = JSON.stringify({
+        "topics": [{
+          "promotionId": "11",
+          "id": "15",
+          "offset": this.offset,
+          "pageSize": 10
+        }]
+      })
+
+      const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+      console.log('首页list', res)
+      const items = res.data.data.topicRes.data[0].items
+      this.productList = [...this.productList, ...items]
+      this.offset += 10
+      console.log(this.offset)
+    }
+
   }
 </script>

@@ -1,49 +1,60 @@
 <style lang="less">
   @primary-color: #ff2a48;
 
-  .detail{
+  .detail {
     background-color: #f5f5f5;
-    .swiper-container{
+    padding-bottom: 98rpx;
+    position: relative;
+    .swiper-container {
       height: 750rpx;
-      .swiper-slide{
+      .swiper-slide {
         width: 100%;
         height: 100%;
       }
     }
-    .slide-image{
+    .slide-image {
       width: 750rpx;
       height: 750rpx;
     }
 
-    .product-info{
-      padding:40rpx 24rpx 36rpx;
+    .product-info {
+      padding: 40rpx 24rpx 36rpx;
       margin-bottom: 20rpx;
       background-color: #fff;
-      .price-panel{
+      .price-panel {
         margin-bottom: 34rpx;
-        .price-tag{
+        position: relative;
+        .price-tag {
           font-size: 28rpx;
           color: @primary-color;
         }
-        .price-now{
+        .price-now {
           font-size: 40rpx;
           color: @primary-color;
         }
-        .price-old{
+        .price-old {
           font-size: 28rpx;
           color: #999;
           text-decoration: line-through;
         }
-        .sold{
-          float: right;
+        .sold {
           font-size: 26rpx;
           color: #999;
-          margin-top: 10rpx;
+          position: absolute;
+          right: 0;
+          top: 10rpx;
+        }
+        .price-coupon{
+          background-color: #fe2947;
+          color: #fff;
+          border-radius: 4rpx;
+          font-size: 24rpx;
+          padding: 2rpx 8rpx;
         }
       }
-      .info-panel{
-
-        .free-ship{
+      .info-panel {
+        overflow: hidden;
+        .free-ship {
           color: #fd723c;
           border-radius: 2rpx;
           font-size: 24rpx;
@@ -52,15 +63,16 @@
           position: relative;
           top: -4rpx;
         }
-        .title{
+        .title {
           font-size: 30rpx;
           color: #444;
+          width: 100%;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           font-weight: 700;
         }
-        .recommend{
+        .recommend {
           color: #fd723c;
           font-size: 26rpx;
           margin-top: 24rpx;
@@ -68,9 +80,9 @@
       }
     }
 
-    .product-intro{
+    .product-intro {
       background-color: #fff;
-      .intro-tabs{
+      .intro-tabs {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -86,20 +98,20 @@
           }
         }
       }
-      .intro-detail{
+      .intro-detail {
         padding: 20rpx;
-        .image{
+        .image {
           width: 100%;
         }
       }
       .intro-comment {
-        .comment{
+        .comment {
           padding: 35rpx 24rpx;
           font-size: 26rpx;
           border-bottom: 1rpx solid #eee;
           .buyer {
             color: #666;
-            margin-bottom:20rpx;
+            margin-bottom: 20rpx;
             .time {
               float: right;
               color: #aaa;
@@ -110,7 +122,6 @@
             color: #444;
           }
         }
-
       }
     }
 
@@ -128,7 +139,7 @@
       border-top: 1px solid #eee;
       font-size: 28rpx;
       color: #fff;
-      .image{
+      .image {
         height: 100%;
         width: 320rpx;
       }
@@ -139,10 +150,10 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        .coupon-name{
+        .coupon-name {
           font-size: 26rpx;
         }
-        .coupon-price{
+        .coupon-price {
           font-size: 32rpx;
         }
       }
@@ -154,14 +165,88 @@
         align-items: center;
       }
     }
+
+    .detail-taoKey {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      .taoKeyPic {
+        width: 600rpx;
+        height: 600rpx;
+      }
+      .taoKeyInput{
+        position: absolute;
+        top: 400rpx;
+        color: @primary-color;
+        font-size: 32rpx;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .taoKeyBtn{
+        background-image: linear-gradient(90deg, #fe3665, #fc775f);
+        border: none;
+        color: #fff;
+        font-size: 30rpx;
+        width: 360rpx;
+        padding: 14rpx 0;
+        position: absolute;
+        top: 530rpx;
+        left: 50%;
+        margin-left: -180rpx;
+        border-radius: 100rpx;
+      }
+      .close-btn {
+        display: block;
+        width: 40rpx;
+        height: 40rpx;
+        overflow: hidden;
+        position: relative;
+        color: #fff;
+        padding: 10rpx;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        background-color: transparent;
+        margin: 0 auto;
+        margin-top: 80rpx;
+        &::before,
+        &::after {
+          position: absolute;
+          content: '';
+          top: 50%;
+          left: 10%;
+          background: #fff;
+          width: 80%;
+          height: 2rpx;
+        }
+        &::before {
+          transform: rotate(45deg);
+        }
+        &::after {
+          transform: rotate(-45deg);
+        }
+      }
+
+    }
   }
 </style>
 <template>
   <view class="detail">
-    <swiper class="swiper-container" indicator-dots="{{true}}" autoplay="{{false}}">
-      <block wx:for="{{product.tbImgList}}" wx:key="index">
+    <swiper class="swiper-container"
+            indicator-dots="{{true}}"
+            autoplay="{{false}}">
+      <block wx:for="{{product.tbImgList}}"
+             wx:key="index">
         <swiper-item class="swiper-slide">
-          <image src="{{item}}" class="slide-image"/>
+          <image src="{{item}}"
+                 class="slide-image"/>
         </swiper-item>
       </block>
     </swiper>
@@ -171,62 +256,98 @@
         <text class="price-tag">¥</text>
         <text class="price-now">{{product.price}}</text>
         <text class="price-old">¥{{product.originPrice}}</text>
-        <text class="coupon" wx:if="{{product.isHasActivity}}">{{product.activityPrice }}元优惠券</text>
+        <text class="price-coupon"
+              wx:if="{{product.isHasActivity}}">{{product.activityPrice}}元优惠券
+        </text>
         <text class="sold">已购 {{product.saleCount}} 件</text>
       </view>
       <view class="info-panel">
         <MB :source.sync="product.source"></MB>
-        <text class="free-ship" wx:if="{{product.isPinkage}}">包邮</text>
+        <text class="free-ship"
+              wx:if="{{product.isPinkage}}">包邮
+        </text>
         <text class="title">{{product.title}}</text>
-        <view class="recommend" wx:if="product.recommend">小编推荐:{{product.recommend}}
+        <view class="recommend"
+              wx:if="product.recommend">小编推荐:{{product.recommend}}
+
         </view>
       </view>
     </view>
 
     <view class="product-intro">
       <view class="intro-tabs">
-        <text class="tab {{introShow=='detail'?'active':''}}"  @tap="toggleIntroShow('detail')">商品详情</text>
-        <text class="tab {{introShow=='comment'?'active':''}}" @tap="toggleIntroShow('comment')">商品评论</text>
+        <text class="tab {{introShow=='detail'?'active':''}}"
+              @tap="toggleIntroShow('detail')">商品详情
+        </text>
+        <text class="tab {{introShow=='comment'?'active':''}}"
+              @tap="toggleIntroShow('comment')">商品评论
+        </text>
       </view>
-      <view class="intro-detail" wx:if="{{introShow === 'detail'}}">
-        <repeat for="{{product.detailInfoList}}" key="index" index="index" item="item">
-          <image class="image" src="{{item}}"/>
+      <view class="intro-detail"
+            wx:if="{{introShow === 'detail'}}">
+        <repeat for="{{product.detailInfoList}}"
+                key="index"
+                index="index"
+                item="item">
+          <image class="image"
+                 src="{{item}}"/>
         </repeat>
       </view>
 
-      <view class="intro-comment" wx:if="{{introShow === 'comment' && product.commentInfoList.length > 0}}">
-        <repeat for="{{product.commentInfoList}}" key="index" index="index" item="item">
+      <view class="intro-comment"
+            wx:if="{{introShow === 'comment' && product.commentInfoList.length > 0}}">
+        <repeat for="{{product.commentInfoList}}"
+                key="index"
+                index="index"
+                item="item">
           <view class="comment">
-            <view class="buyer">{{item.buyerNick}} <text class="time">{{item.createTime}}</text></view>
+            <view class="buyer">{{item.buyerNick}}
+
+              <text class="time">{{item.createTime}}</text>
+            </view>
             <view class="content">{{item.comment}}</view>
           </view>
         </repeat>
       </view>
     </view>
 
-    <view class="detail-footer">
-      <image class="image" src="../images/detail_footer.jpg"></image>
+    <view class="detail-footer" @tap="showTaoKey">
+      <image class="image"
+             src="../images/detail_footer.jpg"></image>
 
-      <view class="coupon"  wx:if="{{!product.isHasActivity}}">
+      <view class="coupon"
+            wx:if="{{!product.isHasActivity}}">
         <text>加入购物车</text>
       </view>
 
-      <view class="coupon"  wx:if="{{product.isHasActivity}}">
+      <view class="coupon"
+            wx:if="{{product.isHasActivity}}">
         <text class="coupon-name">优惠券</text>
         <text class="coupon-price">{{product.activityPrice}}元</text>
       </view>
 
-      <view class="buy">{{ product.isHasActivity? '领券抢购':'立即抢购' }}</view>
+      <view class="buy">{{ product.isHasActivity ? '领券抢购' : '立即抢购' }}</view>
     </view>
 
-    <button @tap="fetchDetail()">fetch</button>
+    <view class="detail-taoKey" wx:if="{{isShowTaoKey}}">
+      <view class="taoKey">
+        <image class="taoKeyPic" src="../images/taoKey.png"></image>
+        <text class="taoKeyInput" selectable="true">{{taoKey}}</text>
+        <button class="taoKeyBtn" @tap="copyTaoKey">一键复制</button>
+      </view>
+      <view class="close-btn" @tap="closeTaoKey"></view>
+    </view>
   </view>
+
+
 </template>
 
 <script>
   import wepy from 'wepy'
+
   import MB from '../components/product/MB'
   import api from '../mixins/api'
+
 
   export default class DetailPage extends wepy.page {
     config = {}
@@ -237,15 +358,35 @@
 
     data = {
       product: {},
-      introShow: 'detail'
+      introShow: 'detail',
+      isShowTaoKey: false,
+      taoKey: ''
     }
 
     computed = {}
 
     methods = {
-      toggleIntroShow(tab){
+      toggleIntroShow(tab) {
         this.introShow = tab
       },
+      showTaoKey() {
+        this.isShowTaoKey = true
+      },
+      closeTaoKey() {
+        this.isShowTaoKey = false
+      },
+      copyTaoKey(){
+        wx.setClipboardData({
+          data: this.taoKey,
+          success: function(res) {
+            wx.showToast({
+              title: '复制成功',
+              icon: 'success',
+              duration: 1500
+            })
+          }
+        })
+      }
     }
 
     events = {}
@@ -254,8 +395,37 @@
       console.info('详情页加载完成')
       console.log(option.id)
       const id = option.id
-      const res = api.fetchDetail(id)
-      console.log('详情onLoad',res)
+      this.fetchDetail(id)
+      this.fetchTaoKey(id)
+
+    }
+    async fetchDetail (id) {
+      const data = JSON.stringify({
+        "itemDetail": {
+          "ids": [id]
+        },
+        "itemRecommend": [{
+          "id": id
+        }]
+      })
+
+      const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+
+      console.log('详情onLoad', res)
+      this.product = res.data.data.itemDetailInfoRes.data[0]
+    }
+
+
+    async fetchTaoKey(id){
+      const data = JSON.stringify({
+        "taoKouLing": {
+          "itemId": id
+        }
+      })
+      const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+      console.log('淘口令',res)
+      this.taoKey = res.data.data.itemTaoKouLingRes.data.taoKouLing
+
     }
   }
 </script>

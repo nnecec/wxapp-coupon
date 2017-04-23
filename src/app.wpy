@@ -1,6 +1,9 @@
 <style lang="less">
   @color1: #09bb07;
   @primary-color: #ff2a48;
+  page {
+    height: 100%;
+  }
 </style>
 
 <script>

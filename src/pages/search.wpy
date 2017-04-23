@@ -1,8 +1,10 @@
 <style lang="less">
-  .search{
+  @primary-color: #ff2a48;
+
+  .search {
     padding: 20rpx;
     border-bottom: 1rpx solid #e8e8ed;
-    .input-view{
+    .input-view {
       background-color: #e8e8ed;
       width: 570rpx;
       height: 60rpx;
@@ -10,19 +12,19 @@
       font-size: 30rpx;
       border-radius: 30rpx;
       padding: 0 10rpx;
-      .icon{
+      .icon {
         width: 40rpx;
         position: relative;
         top: 4rpx;
         left: 4rpx;
       }
-      .input{
+      .input {
         width: 520rpx;
         display: inline-block;
         margin-top: 8rpx;
       }
     }
-    .button{
+    .button {
       width: 100rpx;
       height: 60rpx;
       display: inline-block;
@@ -32,17 +34,22 @@
     }
   }
 
-  .search-key{
+  .search-key {
     padding: 30rpx 20rpx;
-    .key-title{
+    .key-title {
       font-size: 30rpx;
       color: #333;
     }
-    .key-panel{
+    .key-clear {
+      float: right;
+      font-size: 24rpx;
+      color: @primary-color;
+    }
+    .key-panel {
       margin: 30rpx 0 70rpx;
 
     }
-    .key{
+    .key {
       background-color: #e8e8ed;
       color: #333;
       font-size: 26rpx;
@@ -60,15 +67,19 @@
       <form bindsubmit="onSubmit">
         <view class="input-view">
           <icon class="icon" type="search" size="14" color="#b2b2b2"/>
-          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm	="onSubmit" auto-focus/>
+          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onSubmit" value="{{searchWord}}"
+                 auto-focus/>
         </view>
         <button class="button" formType="submit">搜索</button>
       </form>
     </view>
     <view class="search-key" wx:if="{{!isShowList}}">
       <text class="key-title">历史搜索</text>
+      <text class="key-clear" @tap="clearHistory">清除记录</text>
       <view class="key-panel">
-        <text class="key">裤子</text>
+        <repeat for="{{historyList}}" key="index" index="index" item="item">
+          <view class="key" @tap="clickSearch" data-value="{{item}}">{{item}}</view>
+        </repeat>
       </view>
 
       <text class="key-title">热门搜索</text>
@@ -79,7 +90,7 @@
       </view>
     </view>
 
-    <view class="product-list"  wx:if="{{isShowList}}">
+    <view class="product-list" wx:if="{{isShowList}}">
       <List :list.sync="productList"></List>
     </view>
   </view>
@@ -100,8 +111,10 @@
 
     data = {
       productList: [],
+      historyList: [],
       hotSearchList: [],
-      isShowList: false
+      isShowList: false,
+      searchWord: ''
     }
 
     computed = {}
@@ -109,6 +122,7 @@
     methods = {
       onSubmit(e) {
         const keyword = e.detail.value.keyword
+        this.searchHistory(keyword)
 
         const params = JSON.stringify({
           appKey: 'zdnz',
@@ -126,9 +140,19 @@
             this.isShowList = true
           })
       },
-
-      fetchKeyword(keyword) {
-
+      clickSearch(e) {
+        console.log(e)
+        const keyword = e.target.dateset.value
+        this.searchWord = keyword
+        this.searchHistory(keyword)
+      },
+      clearHistory() {
+        wx.removeStorage({
+          key: 'searchHistory',
+          success: function (res) {
+            console.log(res.data)
+          }
+        })
       }
     }
 
@@ -136,6 +160,7 @@
 
     onLoad () {
       console.info('搜索页加载完成')
+      this.searchHistory()
       this.isShowList = false
 
       wepy.request('http://pre.adbaitai.com/public/1.0/h5/weixin/hot?data=')
@@ -144,6 +169,42 @@
           console.log(data)
           this.hotSearchList = data
         })
+    }
+
+    searchHistory (key) {
+      const self = this
+      if (key) {
+        wx.getStorage({
+          key: 'searchHistory',
+          success: function (res) {
+            console.log('getStorage success', res.data)
+            const history = res.data
+
+            let newHistory = history.filter(value => value !== key).slice(0, 5)
+            newHistory.unshift(key)
+
+            self.historyList = newHistory
+            wx.setStorage({
+              key: "searchHistory",
+              data: newHistory
+            })
+          },
+          fail: function (res) {
+            console.log('getStorage fail', res.data)
+            wx.setStorage({
+              key: "searchHistory",
+              data: [key]
+            })
+          }
+        })
+      } else {
+        wx.getStorage({
+          key: 'searchHistory',
+          success: function (res) {
+            self.historyList = res.data
+          }
+        })
+      }
     }
   }
 </script>

@@ -156,7 +156,6 @@
     methods = {
       viewDetail(id) {
         console.log('进入详情页')
-        console.log(this)
         const self = this
         wx.navigateTo({
           url: '../pages/detail?id=' + self.product.id
@@ -166,7 +165,6 @@
 
     onLoad () {
       console.info('Product 加载完成')
-      console.log(this.productInfo)
     }
   }
 </script>

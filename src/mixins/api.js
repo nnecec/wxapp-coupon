@@ -1,38 +1,26 @@
 import wepy from 'wepy'
 
-const fetchDetail = async(id) => {
-  const api = 'https://adbaitai.com/1.0/h5/batch/search'
-  const data = JSON.stringify({
-    "itemDetail": {
-      "ids": [id]
-    },
-    "itemRecommend": [
-      {
-        "id": id
-      }
-    ]
+const wxRequest = async (params = {}, url) => {
+  wx.showToast({
+    title: '加载中',
+    icon: 'loading'
   })
-
-  let res = await wepy
-    .request(api + '?appKey=zdnz&data=' + encodeURI(data))
-  return res.data.data.itemDetailInfoRes.data[0]
-
-}
-
-const fetch = async(url, params = {}) => {
+  console.log(params, url)
   let res = await wepy.request({
     url: url,
     method: params.method || 'GET',
     data: params.data || {},
     header: {
       'Content-Type': 'application/json'
-    }
-  });
+    },
+  })
+  wx.hideToast()
   console.log(res)
-  return res;
+  return res
 }
+
+const fetchDetail = (params, url) => wxRequest(params, url)
 
 module.exports = {
   fetchDetail,
-  fetch
 }
