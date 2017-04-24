@@ -51,25 +51,21 @@
           font-size: 24rpx;
           padding: 2rpx 8rpx;
         }
+        .free-ship {
+          color: #fd723c;
+          border-radius: 4rpx;
+          font-size: 24rpx;
+          padding: 2rpx 8rpx;
+          background-color: #fed4c4;
+          display: none;
+        }
       }
       .info-panel {
         overflow: hidden;
-        .free-ship {
-          color: #fd723c;
-          border-radius: 2rpx;
-          font-size: 24rpx;
-          padding: 4rpx;
-          background-color: #fed4c4;
-          position: relative;
-          top: -4rpx;
-        }
         .title {
           font-size: 30rpx;
           color: #444;
           width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
           font-weight: 700;
         }
         .recommend {
@@ -259,13 +255,14 @@
         <text class="price-coupon"
               wx:if="{{product.isHasActivity}}">{{product.activityPrice}}元优惠券
         </text>
+        <text class="free-ship"
+              wx:if="{{product.isPinkage}}">包邮
+        </text>
         <text class="sold">已购 {{product.saleCount}} 件</text>
       </view>
       <view class="info-panel">
         <MB :source.sync="product.source"></MB>
-        <text class="free-ship"
-              wx:if="{{product.isPinkage}}">包邮
-        </text>
+
         <text class="title">{{product.title}}</text>
         <view class="recommend"
               wx:if="product.recommend">小编推荐:{{product.recommend}}

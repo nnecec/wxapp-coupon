@@ -1,6 +1,18 @@
 <style lang="less">
   @primary-color: #ff2a48;
 
+  .search-page {
+    height: 100%;
+    .product-list {
+      height: 100%;
+    }
+    .no-more{
+      color: #666;
+      font-size: 30rpx;
+      text-align: center;
+      padding: 20rpx 0;
+    }
+  }
   .search {
     padding: 20rpx;
     border-bottom: 1rpx solid #e8e8ed;
@@ -32,6 +44,7 @@
       font-size: 26rpx;
       padding: 0;
     }
+
   }
 
   .search-key {
@@ -62,13 +75,12 @@
   }
 </style>
 <template>
-  <view class="container">
+  <view class="container search-page">
     <view class="search">
       <form bindsubmit="onSubmit">
         <view class="input-view">
           <icon class="icon" type="search" size="14" color="#b2b2b2"/>
-          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onSubmit" value="{{searchWord}}"
-                 auto-focus/>
+          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onSubmit" value="{{keyword}}" focus/>
         </view>
         <button class="button" formType="submit">搜索</button>
       </form>
@@ -85,14 +97,17 @@
       <text class="key-title">热门搜索</text>
       <view class="key-panel">
         <repeat for="{{hotSearchList}}" key="index" index="index" item="item">
-          <view class="key" @tap="">{{item}}</view>
+          <view class="key" @tap="clickSearch" data-value="{{item}}">{{item}}</view>
         </repeat>
       </view>
     </view>
 
-    <view class="product-list" wx:if="{{isShowList}}">
+    <scroll-view scroll-y="true" bindscrolltolower="fetchSearch" class="product-list" wx:if="{{isShowList}}">
       <List :list.sync="productList"></List>
-    </view>
+      <view class="no-more">
+        {{isBottom?'到底啦，搜搜其他的吧～':'正在加载...'}}
+      </view>
+    </scroll-view>
   </view>
 </template>
 
@@ -100,6 +115,9 @@
   import wepy from 'wepy'
   import SearchBar from '../components/search/SearchBar'
   import List from '../components/product/List'
+
+  import api from '../mixins/api'
+
 
   export default class SearchPage extends wepy.page {
     config = {}
@@ -114,43 +132,42 @@
       historyList: [],
       hotSearchList: [],
       isShowList: false,
-      searchWord: ''
+      keyword: '',
+      offset: 0,
+      isBottom: false
     }
 
     computed = {}
 
     methods = {
       onSubmit(e) {
-        const keyword = e.detail.value.keyword
-        this.searchHistory(keyword)
+        console.log(e)
+        this.keyword = e.detail.value.keyword
+        this.resetList()
 
-        const params = JSON.stringify({
-          appKey: 'zdnz',
-          itemSearchBy: {
-            keyword: keyword,
-            offset: 0,
-            pageSize: 10
-          }
-        })
-        wepy.request('https://pre.adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(params))
-          .then(res => {
-            const data = res.data.data.itemsByKeyRes.data
-            console.log(data)
-            this.productList = data
-            this.isShowList = true
-          })
+//        this.searchHistory(this.keyword)
+//        this.fetchSearch()
       },
       clickSearch(e) {
-        console.log(e)
-        const keyword = e.target.dateset.value
-        this.searchWord = keyword
+        const keyword = e.target.dataset.value
+        this.resetList()
+
+        this.keyword = keyword
+        this.resetList()
+
+
         this.searchHistory(keyword)
+        this.fetchSearch(keyword)
+
       },
       clearHistory() {
+        const self = this
         wx.removeStorage({
           key: 'searchHistory',
           success: function (res) {
             console.log(res.data)
+            self.searchHistory()
+
           }
         })
       }
@@ -162,6 +179,7 @@
       console.info('搜索页加载完成')
       this.searchHistory()
       this.isShowList = false
+      this.resetList()
 
       wepy.request('http://pre.adbaitai.com/public/1.0/h5/weixin/hot?data=')
         .then(res => {
@@ -171,6 +189,35 @@
         })
     }
 
+    resetList() {
+      this.productList = []
+      this.offset = 0
+      this.isBottom = false
+    }
+
+    // 拉取搜索结果
+    async fetchSearch() {
+      console.log('拉取搜索结果')
+      const data = JSON.stringify({
+        itemSearchBy: {
+          keyword: this.keyword,
+          offset: this.offset,
+          pageSize: 10
+        }
+      })
+      if (!this.isBottom) {
+        const res = await api.fetchDetail({}, 'https://pre.adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+        const items = res.data.data.itemsByKeyRes.data
+        this.productList = [...this.productList, ...items]
+        this.offset += 10
+        this.isShowList = true
+        if (items.length <= 0) {
+          this.isBottom = true
+        }
+      }
+    }
+
+    // 设置搜索历史
     searchHistory (key) {
       const self = this
       if (key) {

@@ -53,6 +53,13 @@
       position: relative;
       .title {
         font-size: 30rpx;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        color: #444;
       }
 
       .price-panel {

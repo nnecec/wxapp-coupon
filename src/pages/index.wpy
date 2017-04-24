@@ -27,12 +27,11 @@
 </style>
 <template>
   <view class="home">
-    <view class="search-panel">
-      <text class="search-title">来搜购物</text>
-      <navigator class="search-link" url="./search">搜索心仪商品</navigator>
-    </view>
-
     <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
+      <view class="search-panel">
+        <text class="search-title">来搜购物</text>
+        <navigator class="search-link" url="./search">搜索心仪商品</navigator>
+      </view>
       <List :list.sync="productList"/>
     </scroll-view>
 
@@ -80,6 +79,12 @@
 
     async onLoad () {
       this.fetchList()
+
+      wx.getUserInfo({
+        success: function(res) {
+          console.log('user info', res)
+        }
+      })
     }
 
     async fetchList () {
