@@ -113,7 +113,7 @@
 
 <script>
   import wepy from 'wepy'
-  import SearchBar from '../components/search/SearchBar'
+//  import SearchBar from '../components/search/SearchBar'
   import List from '../components/product/List'
 
   import api from '../mixins/api'
@@ -123,7 +123,7 @@
     config = {}
 
     components = {
-      SearchBar: SearchBar,
+//      SearchBar: SearchBar,
       List: List,
     }
 
@@ -140,26 +140,20 @@
     computed = {}
 
     methods = {
-      onSubmit(e) {
-        console.log(e)
-        this.keyword = e.detail.value.keyword
-        this.resetList()
 
-//        this.searchHistory(this.keyword)
-//        this.fetchSearch()
-      },
+      // 点击历史搜索
       clickSearch(e) {
         const keyword = e.target.dataset.value
-        this.resetList()
 
         this.keyword = keyword
         this.resetList()
-
 
         this.searchHistory(keyword)
         this.fetchSearch(keyword)
 
       },
+
+      // 清除历史记录
       clearHistory() {
         const self = this
         wx.removeStorage({
@@ -167,7 +161,6 @@
           success: function (res) {
             console.log(res.data)
             self.searchHistory()
-
           }
         })
       }
@@ -189,6 +182,16 @@
         })
     }
 
+    // 点击搜索按钮搜索
+    onSubmit(e) {
+      this.keyword = e.detail.value.keyword
+      this.resetList()
+
+      this.searchHistory(this.keyword)
+      this.fetchSearch()
+    },
+
+    // 重置搜索
     resetList() {
       this.productList = []
       this.offset = 0
@@ -199,18 +202,21 @@
     async fetchSearch() {
       console.log('拉取搜索结果')
       const data = JSON.stringify({
-        itemSearchBy: {
-          keyword: this.keyword,
-          offset: this.offset,
-          pageSize: 10
+        "itemSearchBy": {
+          "keyword": this.keyword,
+          "offset": this.offset,
+          "pageSize": 10
         }
       })
+
       if (!this.isBottom) {
         const res = await api.fetchDetail({}, 'https://pre.adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
         const items = res.data.data.itemsByKeyRes.data
         this.productList = [...this.productList, ...items]
         this.offset += 10
         this.isShowList = true
+        this.$apply();
+        console.log(this)
         if (items.length <= 0) {
           this.isBottom = true
         }

@@ -389,11 +389,14 @@
     events = {}
 
     async onLoad (option) {
+      this.product = {}
+
       console.info('详情页加载完成')
       console.log(option.id)
       const id = option.id
       this.fetchDetail(id)
       this.fetchTaoKey(id)
+      this.$apply();
 
     }
     async fetchDetail (id) {
@@ -413,7 +416,7 @@
     }
 
 
-    async fetchTaoKey(id){
+    async fetchTaoKey(id) {
       const data = JSON.stringify({
         "taoKouLing": {
           "itemId": id
