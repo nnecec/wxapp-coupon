@@ -57,7 +57,6 @@
           font-size: 24rpx;
           padding: 2rpx 8rpx;
           background-color: #fed4c4;
-          display: none;
         }
       }
       .info-panel {
@@ -255,9 +254,10 @@
         <text class="price-coupon"
               wx:if="{{product.isHasActivity}}">{{product.activityPrice}}元优惠券
         </text>
-        <text class="free-ship"
-              wx:if="{{product.isPinkage}}">包邮
-        </text>
+        <!--<text class="free-ship"-->
+              <!--wx:if="{{product.isPinkage}}">包邮-->
+        <!--</text>-->
+        <!--<text class="free-ship">{{product.source === 'TM'?'天猫':'淘宝'}}</text>-->
         <text class="sold">已购 {{product.saleCount}} 件</text>
       </view>
       <view class="info-panel">
@@ -372,7 +372,7 @@
       closeTaoKey() {
         this.isShowTaoKey = false
       },
-      copyTaoKey(){
+      copyTaoKey() {
         wx.setClipboardData({
           data: this.taoKey,
           success: function(res) {
@@ -391,13 +391,13 @@
     async onLoad (option) {
       this.product = {}
 
-      console.info('详情页加载完成')
-      console.log(option.id)
+      console.info('详情页加载完成', option.id)
       const id = option.id
       this.fetchDetail(id)
       this.fetchTaoKey(id)
-      this.$apply();
-
+      wx.setNavigationBarTitle({
+        title: '商品详情'
+      })
     }
     async fetchDetail (id) {
       const data = JSON.stringify({
@@ -410,9 +410,9 @@
       })
 
       const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
-
       console.log('详情onLoad', res)
       this.product = res.data.data.itemDetailInfoRes.data[0]
+      this.$apply()
     }
 
 
@@ -425,7 +425,6 @@
       const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
       console.log('淘口令',res)
       this.taoKey = res.data.data.itemTaoKouLingRes.data.taoKouLing
-
     }
   }
 </script>

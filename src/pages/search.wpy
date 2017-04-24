@@ -80,7 +80,7 @@
       <form bindsubmit="onSubmit">
         <view class="input-view">
           <icon class="icon" type="search" size="14" color="#b2b2b2"/>
-          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onSubmit" value="{{keyword}}" focus/>
+          <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onConfirm" value="{{keyword}}" focus/>
         </view>
         <button class="button" formType="submit">搜索</button>
       </form>
@@ -102,7 +102,7 @@
       </view>
     </view>
 
-    <scroll-view scroll-y="true" bindscrolltolower="fetchSearch" class="product-list" wx:if="{{isShowList}}">
+    <scroll-view scroll-y="true" bindscrolltolower="fetchSearch" class="product-list" wx:if="{{isShowList}}" lower-threshold="100">
       <List :list.sync="productList"></List>
       <view class="no-more">
         {{isBottom?'到底啦，搜搜其他的吧～':'正在加载...'}}
@@ -113,7 +113,6 @@
 
 <script>
   import wepy from 'wepy'
-//  import SearchBar from '../components/search/SearchBar'
   import List from '../components/product/List'
 
   import api from '../mixins/api'
@@ -123,7 +122,6 @@
     config = {}
 
     components = {
-//      SearchBar: SearchBar,
       List: List,
     }
 
@@ -143,6 +141,7 @@
 
       // 点击历史搜索
       clickSearch(e) {
+        console.log(e)
         const keyword = e.target.dataset.value
 
         this.keyword = keyword
@@ -150,7 +149,6 @@
 
         this.searchHistory(keyword)
         this.fetchSearch(keyword)
-
       },
 
       // 清除历史记录
@@ -160,7 +158,8 @@
           key: 'searchHistory',
           success: function (res) {
             console.log(res.data)
-            self.searchHistory()
+            self.historyList = []
+            self.$apply()
           }
         })
       }
@@ -174,7 +173,7 @@
       this.isShowList = false
       this.resetList()
 
-      wepy.request('http://pre.adbaitai.com/public/1.0/h5/weixin/hot?data=')
+      wepy.request('https://adbaitai.com/public/1.0/h5/weixin/hot?data=')
         .then(res => {
           const data = res.data.data.hotSearch
           console.log(data)
@@ -184,12 +183,23 @@
 
     // 点击搜索按钮搜索
     onSubmit(e) {
+      console.log(e)
       this.keyword = e.detail.value.keyword
       this.resetList()
 
       this.searchHistory(this.keyword)
       this.fetchSearch()
-    },
+    }
+
+    // 键盘完成搜索
+    onConfirm(e) {
+      console.log(e)
+      this.keyword = e.detail.value
+      this.resetList()
+
+      this.searchHistory(this.keyword)
+      this.fetchSearch()
+    }
 
     // 重置搜索
     resetList() {
@@ -202,24 +212,21 @@
     async fetchSearch() {
       console.log('拉取搜索结果')
       const data = JSON.stringify({
-        "itemSearchBy": {
-          "keyword": this.keyword,
-          "offset": this.offset,
-          "pageSize": 10
-        }
+        "keyWord": this.keyword,
+        "offset": this.offset,
+        "pageSize": 10
       })
 
       if (!this.isBottom) {
-        const res = await api.fetchDetail({}, 'https://pre.adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+        const res = await api.fetchDetail({}, 'https://adbaitai.com/public/1.0/h5/weixin/searchByKeyWord?data=' + encodeURI(data))
         const items = res.data.data.itemsByKeyRes.data
         this.productList = [...this.productList, ...items]
         this.offset += 10
         this.isShowList = true
-        this.$apply();
-        console.log(this)
         if (items.length <= 0) {
           this.isBottom = true
         }
+        this.$apply()
       }
     }
 
