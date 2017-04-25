@@ -266,7 +266,7 @@
 
         <text class="title">{{product.title}}</text>
         <view class="recommend"
-              wx:if="product.recommend">小编推荐:{{product.recommend}}
+              wx:if="{{product.recommend}}">小编推荐:{{product.recommend}}
 
         </view>
       </view>

@@ -12,8 +12,8 @@ const wxRequest = async (params = {}, url) => {
     data: params.data || {},
     header: {
       'Content-Type': 'application/json',
-      'X-Version': '1.0.0',
-      'X-AppName':''
+      'X-Version': '1.0',
+      'X-AppName':'fansCoupon'
     }
   })
   wx.hideToast()
