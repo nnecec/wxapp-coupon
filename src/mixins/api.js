@@ -22,5 +22,5 @@ const wxRequest = async (params = {}, url) => {
 const fetchDetail = (params, url) => wxRequest(params, url)
 
 module.exports = {
-  fetchDetail,
+  fetchDetail
 }
