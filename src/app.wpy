@@ -15,11 +15,12 @@
       pages: [
         'pages/index',
         'pages/search',
-        'pages/detail'
+        'pages/detail',
+        'pages/agent'
       ],
       window: {
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#ff2a48',
+        navigationBarBackgroundColor: '#fe2a38',
         navigationBarTitleText: '粉丝专享优惠券',
         navigationBarTextStyle: 'white'
       }

@@ -12,7 +12,7 @@ const wxRequest = async (params = {}, url) => {
     data: params.data || {},
     header: {
       'Content-Type': 'application/json'
-    },
+    }
   })
   wx.hideToast()
   console.log(res)

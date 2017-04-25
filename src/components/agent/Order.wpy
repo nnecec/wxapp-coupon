@@ -1,0 +1,54 @@
+<style type="less">
+  @price: #fe2947;
+  .order {
+    .order-image {
+      display: inline-block;
+      .image{
+        width: 140rpx;
+        height: 140rpx;
+      }
+    }
+    .order-info{
+      display: inline-block;
+    }
+  }
+</style>
+<template>
+  <view class="order">
+    订单
+    <view class="order-image">
+      <image class="image" mode="aspectFill" src="{{order.picUrl}}"></image>
+    </view>
+
+    <view class="order-info">
+      <view class="order-title">春季风衣</view>
+      <view class="price-info">
+        <text>订单金额:¥</text><text>89。9</text><text>预估收益:¥</text><text>14.4</text>
+      </view>
+    </view>
+
+    <view class="time-info">
+      <text>2017-04-23 创建</text>
+      <text>订单结算</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Product extends wepy.component {
+    props = {
+      order: Object
+    }
+
+    components = {}
+
+    methods = {
+
+    }
+
+    onLoad () {
+      console.info('Order 加载完成')
+    }
+  }
+</script>

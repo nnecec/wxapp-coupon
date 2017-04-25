@@ -106,9 +106,9 @@
         padding: 10rpx 20rpx;
       }
       .coupon{
-        background-image: url('../images/coupon.png');
+        background-color: #fe2947;
         background-size: 100% 100%;
-        padding: 12rpx 18rpx 16rpx;
+        padding: 8rpx 18rpx 12rpx;
         font-size: 24rpx;
         color: #fff;
         .yellow{
@@ -144,7 +144,7 @@
       <text class="sold">已购 {{product.saleCount}} 件</text>
     </view>
 
-    <view class="way">
+    <view class="way" wx:if="{{product.isShowCoupon}}">
       <view class="text" wx:if="{{!product.isHasActivity}}">{{product.source ==='TM'?'去天猫':'去淘宝'}}</view>
       <view class="coupon" wx:if="{{product.isHasActivity}}"><text class="yellow">¥</text><text class="yellow price">{{product.activityPrice}}</text>优惠券</view>
     </view>
