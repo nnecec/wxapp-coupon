@@ -11,8 +11,10 @@ const wxRequest = async (params = {}, url) => {
     method: params.method || 'GET',
     data: params.data || {},
     header: {
-      'Content-Type': 'application/json'
-    },
+      'Content-Type': 'application/json',
+      'X-Version': '1.0.0',
+      'X-AppName':''
+    }
   })
   wx.hideToast()
   console.log(res)
