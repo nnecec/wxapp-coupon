@@ -253,7 +253,7 @@
         <text class="price-now">{{product.price}}</text>
         <text class="price-old">¥{{product.originPrice}}</text>
         <text class="price-coupon"
-              wx:if="{{product.isHasActivity}}">{{product.activityPrice}}元优惠券
+              wx:if="{{product.isHasActivity&&product.isShowCoupon}}">{{product.activityPrice}}元优惠券
         </text>
         <!--<text class="free-ship"-->
               <!--wx:if="{{product.isPinkage}}">包邮-->
@@ -309,7 +309,7 @@
       </view>
     </view>
 
-    <view class="detail-footer" @tap="showTaoKey">
+    <view class="detail-footer" @tap="showTaoKey" wx:if="{{product.isShowCoupon}}">
       <image class="image"
              src="../images/detail_footer.jpg"></image>
 
