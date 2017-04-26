@@ -51,6 +51,7 @@
     .product-info {
       padding: 20rpx;
       position: relative;
+      width: 410rpx;
       .title {
         font-size: 30rpx;
         word-wrap: break-word;
@@ -60,6 +61,7 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         color: #444;
+        font-weight: 700;
       }
 
       .price-panel {

@@ -178,8 +178,25 @@
           const data = res.data.data.hotSearch
           console.log(data)
           this.hotSearchList = data
+          this.$apply()
         })
     }
+
+    onShareAppMessage () {
+      return {
+        title: '粉丝专享优惠券',
+        path: 'pages/search',
+        success: function(res) {
+          // 分享成功
+          console.log('分享成功', res)
+        },
+        fail: function(res) {
+          // 分享失败
+          console.log('分享失败', res)
+        }
+      }
+    }
+
 
     // 点击搜索按钮搜索
     onSubmit(e) {
@@ -218,7 +235,7 @@
       })
 
       if (!this.isBottom) {
-        const res = await api.fetchDetail({}, 'https://adbaitai.com/public/1.0/h5/weixin/searchByKeyWord?data=' + encodeURI(data))
+        const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/searchByKeyWord?data=' + encodeURI(data))
         const items = res.data.data.itemsByKeyRes.data
         this.productList = [...this.productList, ...items]
         this.offset += 10
