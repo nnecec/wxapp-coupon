@@ -42,13 +42,12 @@
       wx.login({
         success: function(res) {
           if (res.code) {
-            //发起网络请求
-//            wx.request({
-//              url: 'https://test.com/onLogin',
-//              data: {
-//                code: res.code
-//              }
-//            })
+            // 发起网络请求
+            wepy.request({
+              url: `https://api.weixin.qq.com/sns/jscode2session?appid=wxe8f036f43b0f951b&secret=e35dcd6ecf58d46ef5551e408d931a4e&js_code=${res.code}&grant_type=authorization_code`,
+            }).then(res => {
+              console.log('', res)
+            })
           } else {
             console.log('获取用户登录态失败！' + res.errMsg)
           }

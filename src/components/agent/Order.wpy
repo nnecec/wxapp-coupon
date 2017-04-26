@@ -1,46 +1,87 @@
 <style type="less">
-  @price: #fe2947;
+  @primary-color: #fe2947;
   .order {
-    .order-image {
-      display: inline-block;
-      background-color: red;
-      .image{
-        width: 140rpx;
-        height: 140rpx;
-      }
-    }
-    .order-info{
-      display: inline-block;
-      .order-title {
-        font-size: 26rpx;
-        color: #666;
-      }
-      .order-price{
-        .text{
-          font-size: 28rpx;
-          color: #444;
+    background-color: #fff;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+    .info{
+      padding: 20rpx 0;
+      .order-image {
+        display: inline-block;
+        background-color: red;
+        .image{
+          width: 140rpx;
+          height: 140rpx;
         }
       }
-
+      .order-info{
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 20rpx;
+        width: 530rpx;
+        .order-title {
+          font-size: 26rpx;
+          color: #666;
+          margin: 20rpx 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .order-price{
+          display: flex;
+          justify-content: space-between;
+          .text{
+            font-size: 28rpx;
+            color: #444;
+          }
+          .price{
+            font-size: 38rpx;
+          }
+          .pink{
+            color: @primary-color;
+          }
+        }
+      }
     }
+    .time-info{
+      padding: 20rpx 0;
+      border-top: 1px solid #f5f5f5;
+      display: flex;
+      justify-content: space-between;
+      .time{
+        font-size: 26rpx;
+        color: #aaa;
+      }
+      .status{
+        font-size: 28rpx;
+        color: #333;
+      }
+    }
+
   }
 </style>
 <template>
   <view class="order">
-    <view class="order-image">
-      <image class="image" mode="aspectFill" src="{{order.picUrl}}"></image>
-    </view>
-
-    <view class="order-info">
-      <view class="order-title">春季风衣</view>
-      <view class="order-price">
-        <text class="text">订单金额:¥</text><text class="text">89.9</text><text class="text">预估收益:¥</text><text class="text">14.4</text>
+    <view class="info">
+      <view class="order-image">
+        <image class="image" mode="aspectFill" src="{{order.picUrl}}"></image>
+      </view>
+      <view class="order-info">
+        <view class="order-title">{{order.tbItemTitle}}</view>
+        <view class="order-price">
+          <view>
+            <text class="text">订单金额：¥</text><text class="text price">{{order.price}}</text>
+          </view>
+          <view>
+            <text class="text">预估收益：<text class="pink">¥</text></text><text class="text price pink">{{order.earn}}</text>
+          </view>
+        </view>
       </view>
     </view>
 
     <view class="time-info">
-      <text>2017-04-23 创建</text>
-      <text>订单结算</text>
+      <text class="time">{{order.orderTime}}</text>
+      <text class="status">{{order.status}}</text>
     </view>
   </view>
 </template>
@@ -60,6 +101,8 @@
 
     onLoad () {
       console.info('Order 加载完成')
+      console.log(this.order)
+
     }
   }
 </script>
