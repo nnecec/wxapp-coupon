@@ -74,7 +74,6 @@
       const data = JSON.stringify(userInfo)
       const _agent = await api.fetchDetail({}, '/public/1.0/h5/weixin/empower?data=' + encodeURI(data))
       this.isAgent = _agent.data.data.isAgent
-
       wx.setStorage({
         key: 'isAgent',
         data: this.isAgent

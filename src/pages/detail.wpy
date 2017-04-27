@@ -79,6 +79,8 @@
           .key{
             color: red;
             padding: 10rpx 0;
+            border: 1rpx dashed #999;
+            width: 100%;
           }
         }
       }
@@ -278,8 +280,7 @@
               wx:if="{{product.recommend}}">小编推荐:{{product.recommend}}
         </view>
         <view class="taoKey">
-          <text>复制下方红色口令打开【手机淘宝】即可领券下单</text>
-          <text class="key" selectable="true">{{taoKey}}</text>
+          <textarea class="key" value="复制全部红色文字打开【手机淘宝】即可领券下单{{taoKey}}" auto-height/>
         </view>
 
       </view>
