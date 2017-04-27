@@ -11,18 +11,17 @@ const wxRequest = async (params = {}, url, agentId = '') => {
     data: params.data || {},
     header: {
       'Content-Type': 'application/json',
-      'X-Version': '1.1',
+      'X-Version': '1.2',
       'X-AppName':'fansCoupon',
       'x-agent-app-id': agentId
     }
   })
   wx.hideToast()
-  console.log(res)
   return res
 }
 
 const fetchDetail = (params, url, agentId) => wxRequest(params, 'https://adbaitai.com' + url, agentId)
 
 module.exports = {
-  fetchDetail,
+  fetchDetail
 }

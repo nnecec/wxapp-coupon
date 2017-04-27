@@ -267,7 +267,6 @@
         <text class="title">{{product.title}}</text>
         <view class="recommend"
               wx:if="{{product.recommend}}">小编推荐:{{product.recommend}}
-
         </view>
       </view>
     </view>
@@ -359,7 +358,8 @@
       introShow: 'detail',
       isShowTaoKey: false,
       taoKey: '',
-      id: ''
+      id: '',
+      agentId: ''
     }
 
     computed = {}
@@ -396,18 +396,35 @@
       console.info('详情页加载完成', option.id)
       const id = option.id
       this.id = id
-      this.fetchDetail(id)
-      this.fetchTaoKey(id)
+
       wx.setNavigationBarTitle({
         title: '商品详情'
       })
+
+      const self = this
+      wx.getStorage({
+        key: 'agentId',
+        success: function (res) {
+          self.agentId = res.data
+          self.fetchTaoKey(id)
+        },
+        fail: function () {
+          self.fetchTaoKey(id)
+        }
+      })
+
+      this.fetchDetail(id)
     }
 
     onShareAppMessage () {
-      const self = this
+      let path = 'pages/detail?id=' + this.id
+      if (this.agentId) {
+        path += '&agentId=' + this.agentId
+      }
+
       return {
         title: '粉丝专享优惠券',
-        path: 'pages/detail?id=' + self.id,
+        path: path,
         success: function(res) {
           // 分享成功
           console.log('分享成功', res)
@@ -429,6 +446,7 @@
         }]
       })
 
+
       const res = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
 
       console.log('详情onLoad', res)
@@ -443,28 +461,9 @@
           "itemId": id
         }
       })
-
-      let agentId = ''
-      const self = this
-      wx.getStorage({
-        key: 'agentId',
-        success: async function (res) {
-          agentId = res.data
-          const resTaoKey = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data), agentId)
-          self.taoKey = resTaoKey.data.data.itemTaoKouLingRes.data.taoKouLing
-          self.$apply()
-        },
-        fail: async function () {
-          const resTaoKey = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data), agentId)
-          self.taoKey = resTaoKey.data.data.itemTaoKouLingRes.data.taoKouLing
-          self.$apply()
-        }
-      })
-
-
-
+      const resTaoKey = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data), this.agentId)
+      this.taoKey = resTaoKey.data.data.itemTaoKouLingRes.data.taoKouLing
+      this.$apply()
     }
-
-
   }
 </script>

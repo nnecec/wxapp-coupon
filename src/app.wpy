@@ -9,13 +9,15 @@
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
+  import api from './mixins/api'
 
   export default class extends wepy.app {
     config = {
       pages: [
         'pages/index',
         'pages/search',
-        'pages/detail'
+        'pages/detail',
+        'pages/agent'
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -26,7 +28,8 @@
     }
 
     globalData = {
-      userInfo: null
+      userInfo: null,
+      openid: null
     }
 
     constructor () {
@@ -35,50 +38,49 @@
       this.use('promisify');
     }
 
-    onLaunch () {
-      this.testAsync()
-
+    onLaunch (options) {
+      console.log(options)
+      const self = this
       wx.login({
         success: function(res) {
           if (res.code) {
-            //发起网络请求
-//            wx.request({
-//              url: 'https://test.com/onLogin',
-//              data: {
-//                code: res.code
-//              }
-//            })
+            // 发起网络请求
+            wepy.request({
+              url: `https://api.weixin.qq.com/sns/jscode2session?appid=wxe8f036f43b0f951b&secret=e35dcd6ecf58d46ef5551e408d931a4e&js_code=${res.code}&grant_type=authorization_code`,
+            }).then(res => {
+              console.log('openid=', res.data.openid)
+              self.$app.globalData.openid = res.data.openid
+              self.getUserInfo(res.data.openid)
+            })
           } else {
             console.log('获取用户登录态失败！' + res.errMsg)
           }
         }
-      });
-    }
-
-    sleep (s) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // resolve('promise resolved')
-        }, s * 1000)
       })
     }
 
-    async testAsync () {
-      const data = await this.sleep(3)
-      console.log(data)
-    }
-
-    getUserInfo (cb) {
-      const that = this
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo
+    async getUserInfo (openid) {
+      await wepy.login();
+      const resUserInfo = await wepy.getUserInfo()
+      const obj = {
+        nick: resUserInfo.userInfo.nickName,
+        avatarUrl: resUserInfo.userInfo.avatarUrl,
+        openId: openid
       }
-      wepy.getUserInfo({
-        success (res) {
-          that.globalData.userInfo = res.userInfo
-          cb && cb(res.userInfo)
-        }
+      this.judgeAgent(obj)
+    }
+
+    async judgeAgent(userInfo) {
+      const data = JSON.stringify(userInfo)
+      const _agent = await api.fetchDetail({}, '/public/1.0/h5/weixin/empower?data=' + encodeURI(data))
+      this.isAgent = _agent.data.data.isAgent
+
+      wx.setStorage({
+        key: 'isAgent',
+        data: this.isAgent
       })
     }
+
+
   }
 </script>
