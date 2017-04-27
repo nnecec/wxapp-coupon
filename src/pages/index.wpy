@@ -67,7 +67,7 @@
         <image src="../images/slogen.png" class="search-slogen"></image>
         <navigator class="search-link" url="./search"><icon type="search" class="search-icon" size="16"/><text class="text">搜索心仪商品</text></navigator>
       </view>
-      <navigator url="./agent" class="agent-enter"><image src="../images/agent.png" class="image"></image>效果报表<text class="arrow-right"></text></navigator>
+      <navigator url="./agent" class="agent-enter" wx:if="{{isAgent}}"><image src="../images/agent.png" class="image"></image>效果报表<text class="arrow-right"></text></navigator>
       <List :list.sync="productList"/>
     </scroll-view>
 
@@ -93,7 +93,8 @@
     data = {
       productList: [],
       offset: 0,
-      agentId: ''
+      agentId: '',
+      isAgent: false
     }
 
     computed = {}
@@ -106,13 +107,7 @@
 
     async onLoad (option) {
       this.fetchList()
-
-      wx.getUserInfo({
-        success: function(res) {
-          console.log('user info', res)
-        }
-      })
-
+      const self = this
       if (option.agentId) {
         this.agentId = option.agentId
         wx.setStorage({
@@ -120,7 +115,15 @@
           data: option.agentId
         })
       }
+
+      wx.getStorage({
+        key: 'isAgent',
+        success: function (res) {
+          self.isAgent = res.data
+        }
+      })
     }
+
 
     onShareAppMessage () {
       let path = 'pages/index'
@@ -131,26 +134,9 @@
         title: '粉丝专享优惠券',
         path: path,
         success: function(res) {
-          // 分享成功
           console.log('分享成功', res)
         },
         fail: function(res) {
-          // 分享失败
-          console.log('分享失败', res)
-        }
-      }
-    }
-
-    onShareAppMessage () {
-      return {
-        title: '粉丝专享优惠券',
-        path: 'pages/index',
-        success: function(res) {
-          // 分享成功
-          console.log('分享成功', res)
-        },
-        fail: function(res) {
-          // 分享失败
           console.log('分享失败', res)
         }
       }

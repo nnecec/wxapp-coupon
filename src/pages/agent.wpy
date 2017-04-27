@@ -16,8 +16,9 @@
       background-color: #fff;
       border-bottom: 1px solid #eee;
       .tab {
-        margin: 0 6rpx;
+        margin: 0 40rpx;
         padding: 20rpx 10rpx;
+
         &.active {
           color: @primary-color;
           border-bottom: 4rpx solid @primary-color;
@@ -27,8 +28,10 @@
 
     .statistical{
       .could-withdraw{
-        background-color: #f83654;
         padding: 25rpx 50rpx 60rpx;
+        background-color: #f83654;
+        background-image: url('../images/agent-head.jpg');
+        background-size: cover;
         .title{
           color: #fff;
         }
@@ -50,7 +53,7 @@
         .forecast-withdraw{
           flex: 1;
           padding: 10rpx 50rpx 30rpx;
-          border-right: 1rpx solid #f4f4f4;
+          border-right: 1rpx solid #e8e8e8;
         }
         .already-withdraw{
           flex: 1;
@@ -64,7 +67,7 @@
         padding: 0 30rpx;
         .day-title {
           padding: 20rpx 0;
-          border-bottom: 1rpx solid #f4f4f4;
+          border-bottom: 1rpx solid #e8e8e8;
           font-size: 32rpx;
           .day-note {
             padding-left: 20rpx;
@@ -79,7 +82,7 @@
             padding-top: 10rpx;
           }
           .withdraw {
-            border-right: 1px solid #f5f5f5;
+            border-right: 1px solid #e8e8e8;
           }
         }
       }
@@ -116,6 +119,33 @@
       .all-order {
         font-size: 26rpx;
         color: #444;
+        .clear-date {
+          display: inline-block;
+          width: 27rpx;
+          height: 27rpx;
+          overflow: hidden;
+          position: relative;
+          color: #fff;
+          border-radius: 50%;
+          background-color: #bbb;
+          top: 4rpx;
+          &::before,
+          &::after {
+            position: absolute;
+            content: '';
+            top: 50%;
+            left: 10%;
+            background-color: #fff;
+            width: 80%;
+            height: 1rpx;
+          }
+          &::before {
+            transform: rotate(45deg);
+          }
+          &::after {
+            transform: rotate(-45deg);
+          }
+        }
       }
       .picker{
         display: inline-block;
@@ -126,6 +156,8 @@
             width: 26rpx;
             height: 26rpx;
             margin-right: 20rpx;
+            position: relative;
+            top: 3rpx;
           }
         }
       }
@@ -134,6 +166,8 @@
 </style>
 <template>
   <view class="agent">
+    <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
+
     <view class="agent-tab">
       <text class="tab {{tabShow=='statistical'?'active':''}}"
             @tap="toggleTabShow('statistical')">收益统计
@@ -197,7 +231,9 @@
 
     <view class="orders" wx:if="{{tabShow === 'orders'}}">
       <view class="filter">
-        <text class="all-order">{{date}}</text>
+        <text class="all-order" wx:if="{{date}}" @tap="clearDate">{{date}} <text class="clear-date"></text></text>
+        <text class="all-order" wx:if="{{!date}}">全部订单</text>
+
         <picker class="picker" bindchange="bindDateChange" mode="date" value="{{date}}">
           <view class="date">
             <image class="image" src="../images/calender.png"></image>
@@ -211,6 +247,8 @@
         </repeat>
       </view>
     </view>
+    </scroll-view>
+
   </view>
 </template>
 
@@ -219,7 +257,6 @@
 
   import Order from '../components/agent/Order'
   import api from '../mixins/api'
-  import Store from '../mixins/store'
 
   export default class DetailPage extends wepy.page {
     config = {}
@@ -229,10 +266,12 @@
     }
 
     data = {
-      tabShow: 'orders',
-      date: '全部订单',
+      tabShow: 'statistical',
+      date: '',
       agent: {},
-      orders: []
+      orders: [],
+      offset: 0,
+      openid: ''
     }
 
     computed = {}
@@ -241,20 +280,70 @@
       toggleTabShow(tab) {
         this.tabShow = tab
       },
-      bindDateChange(e) {
-        console.log(e.detail)
-        this.date = e.detail.value
-      }
+
     }
 
     events = {}
 
-    onLoad () {
-      console.log(this.$wxapp)
+    async onLoad () {
+      this.offset = 0
+      this.orders = []
+
+      this.openid = this.$wxapp.$app.globalData.openid
+      console.log(this.openid)
+      this.fetchWithdraw()
+      this.fetchOrders()
     }
 
-    fetchWithdraw() {
+    bindDateChange(e) {
+      console.log(e.detail)
+      this.date = e.detail.value
+      this.orders = []
 
+      this.fetchOrders(this.date)
+    }
+
+    clearDate() {
+      this.date = ''
+      this.orders = []
+      this.fetchOrders()
+    }
+
+    // 获取收益数据
+    async fetchWithdraw() {
+      const data = JSON.stringify({
+        "openId": this.openid
+      })
+
+      const resWithdraw = await api.fetchDetail({}, '/public/1.0/h5/weixin/earnStatistics?data=' + encodeURI(data))
+      console.log(resWithdraw)
+      this.agent = resWithdraw.data.data
+      this.$apply()
+    }
+
+    async fetchOrders(date = ''){
+      const self = this
+      const data = JSON.stringify({
+        "openId":this.openid,
+        "startDate": date,
+        "endDate": date,
+        "offset": self.offset,
+        "pageSize":10
+      })
+
+      const resOrders = await api.fetchDetail({}, '/public/1.0/h5/weixin/orderInfoList?data=' + encodeURI(data))
+      const items = resOrders.data.data.map((value) => {
+        value.orderTime = this.formatDate(new Date(value.orderTime), 'yyyy-MM-dd')
+        return value
+      })
+      this.orders = [...this.orders, ...items]
+      this.$apply()
+    }
+
+    fetchList() {
+      console.log(this.offset)
+      this.offset += 10
+      this.fetchOrders()
     }
 
     formatDate(date,fmt) {

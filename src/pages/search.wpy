@@ -201,11 +201,9 @@
         title: '粉丝专享优惠券',
         path: path,
         success: function(res) {
-          // 分享成功
           console.log('分享成功', res)
         },
         fail: function(res) {
-          // 分享失败
           console.log('分享失败', res)
         }
       }

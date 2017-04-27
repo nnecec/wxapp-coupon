@@ -4,14 +4,25 @@
     background-color: #fff;
     padding: 0 20rpx;
     margin-bottom: 10rpx;
+    &.failure{
+      .pink{
+        color: #999!important;
+      }
+      .status {
+        color: #999!important;
+      }
+    }
     .info{
       padding: 20rpx 0;
       .order-image {
         display: inline-block;
-        background-color: red;
+        background-image: url('http://h5cow.oss-cn-hangzhou.aliyuncs.com/zdclock/static/media/loading.jpg');
+        background-size: cover;
+        width: 140rpx;
+        height: 140rpx;
         .image{
-          width: 140rpx;
-          height: 140rpx;
+          width: 100%;
+          height: 100%;
         }
       }
       .order-info{
@@ -61,7 +72,7 @@
   }
 </style>
 <template>
-  <view class="order">
+  <view class="order {{order.status===1? 'failure': ''}}">
     <view class="info">
       <view class="order-image">
         <image class="image" mode="aspectFill" src="{{order.picUrl}}"></image>
@@ -81,7 +92,7 @@
 
     <view class="time-info">
       <text class="time">{{order.orderTime}}</text>
-      <text class="status">{{order.status}}</text>
+      <text class="status">{{order.statusText}}</text>
     </view>
   </view>
 </template>

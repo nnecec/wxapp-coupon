@@ -5,7 +5,6 @@ const wxRequest = async (params = {}, url, agentId = '') => {
     title: '加载中',
     icon: 'loading'
   })
-  console.log('api',agentId)
   let res = await wepy.request({
     url: url,
     method: params.method || 'GET',
@@ -18,11 +17,10 @@ const wxRequest = async (params = {}, url, agentId = '') => {
     }
   })
   wx.hideToast()
-  console.log(res)
   return res
 }
 
-const fetchDetail = (params, url, agentId) => wxRequest(params, 'https://adbaitai.com' + url, agentId)
+const fetchDetail = (params, url, agentId) => wxRequest(params, 'https://pre.adbaitai.com' + url, agentId)
 
 module.exports = {
   fetchDetail

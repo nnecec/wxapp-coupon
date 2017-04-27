@@ -9,6 +9,7 @@
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
+  import api from './mixins/api'
 
   export default class extends wepy.app {
     config = {
@@ -37,7 +38,8 @@
       this.use('promisify');
     }
 
-    onLaunch () {
+    onLaunch (options) {
+      console.log(options)
       const self = this
       wx.login({
         success: function(res) {
@@ -46,27 +48,39 @@
             wepy.request({
               url: `https://api.weixin.qq.com/sns/jscode2session?appid=wxe8f036f43b0f951b&secret=e35dcd6ecf58d46ef5551e408d931a4e&js_code=${res.code}&grant_type=authorization_code`,
             }).then(res => {
-              console.log('openid', res.data.openid)
-              self.globalData.openid = res.data.openid
+              console.log('openid=', res.data.openid)
+              self.$app.globalData.openid = res.data.openid
+              self.getUserInfo(res.data.openid)
             })
           } else {
             console.log('获取用户登录态失败！' + res.errMsg)
           }
         }
-      });
-    }
-
-    getUserInfo (cb) {
-      const that = this
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo
-      }
-      wepy.getUserInfo({
-        success (res) {
-          that.globalData.userInfo = res.userInfo
-          cb && cb(res.userInfo)
-        }
       })
     }
+
+    async getUserInfo (openid) {
+      await wepy.login();
+      const resUserInfo = await wepy.getUserInfo()
+      const obj = {
+        nick: resUserInfo.userInfo.nickName,
+        avatarUrl: resUserInfo.userInfo.avatarUrl,
+        openId: openid
+      }
+      this.judgeAgent(obj)
+    }
+
+    async judgeAgent(userInfo) {
+      const data = JSON.stringify(userInfo)
+      const _agent = await api.fetchDetail({}, '/public/1.0/h5/weixin/empower?data=' + encodeURI(data))
+      this.isAgent = _agent.data.data.isAgent
+
+      wx.setStorage({
+        key: 'isAgent',
+        data: this.isAgent
+      })
+    }
+
+
   }
 </script>
