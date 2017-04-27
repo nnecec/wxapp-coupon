@@ -92,23 +92,14 @@
 
     data = {
       productList: [],
-      offset: 0
+      offset: 0,
+      agentId: ''
     }
 
     computed = {}
 
     methods = {
-      upper (e) {
-        console.log(e)
-      },
 
-      lower (e) {
-        console.log(e)
-      },
-
-      scroll (e) {
-        console.log(e)
-      }
     }
 
     events = {}
@@ -123,18 +114,22 @@
       })
 
       if (option.agentId) {
-        const agentId = option.agentId
+        this.agentId = option.agentId
         wx.setStorage({
           key: 'agentId',
-          data: agentId
+          data: option.agentId
         })
       }
     }
 
     onShareAppMessage () {
+      let path = 'pages/index'
+      if (this.agentId) {
+        path += '?agentId=' + this.agentId
+      }
       return {
         title: '粉丝专享优惠券',
-        path: 'pages/index',
+        path: path,
         success: function(res) {
           // 分享成功
           console.log('分享成功', res)

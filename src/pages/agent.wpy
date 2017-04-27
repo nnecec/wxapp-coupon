@@ -145,19 +145,19 @@
 
     <view class="statistical" wx:if="{{tabShow === 'statistical'}}">
       <view class="could-withdraw">
-        <view class="title">累积收益</view>
-        <view class="price">¥{{agent.totalEarn}}</view>
+        <view class="title">可提现收益</view>
+        <view class="price">¥{{agent.canWithDraw}}</view>
       </view>
 
       <view class="no-withdraw">
         <view class="forecast-withdraw">
           <view class="title">预估收益</view>
-          <view class="price">¥{{agent.estimateEarn}}</view>
+          <view class="price">¥{{agent.estimate}}</view>
         </view>
 
         <view class="already-withdraw">
           <view class="title">已提现收益</view>
-          <view class="price">¥{{agent.withdrawEdEarn}}</view>
+          <view class="price">¥{{agent.withDrawed}}</view>
         </view>
       </view>
 
@@ -167,11 +167,11 @@
         </view>
         <view class="data">
           <view class="withdraw">
-            <view class="price">45.00</view>
+            <view class="price">{{agent.estimateToday}}</view>
             <view class="title">预估收益</view>
           </view>
           <view class="order-amount">
-            <view class="price">10</view>
+            <view class="price">{{agent.orderNumToday}}</view>
             <view class="title">成交笔数</view>
           </view>
         </view>
@@ -183,11 +183,11 @@
         </view>
         <view class="data">
           <view class="withdraw">
-            <view class="price">45.00</view>
+            <view class="price">{{agent.estimateYesterday}}</view>
             <view class="title">预估收益</view>
           </view>
           <view class="order-amount">
-            <view class="price">10</view>
+            <view class="price">{{agent.orderNumYesterday}}</view>
             <view class="title">成交笔数</view>
           </view>
         </view>
@@ -197,11 +197,11 @@
 
     <view class="orders" wx:if="{{tabShow === 'orders'}}">
       <view class="filter">
-        <text class="all-order">全部订单</text>
+        <text class="all-order">{{date}}</text>
         <picker class="picker" bindchange="bindDateChange" mode="date" value="{{date}}">
           <view class="date">
             <image class="image" src="../images/calender.png"></image>
-            <text>{{date}}</text>
+            <text>筛选</text>
           </view>
         </picker>
       </view>
@@ -219,6 +219,7 @@
 
   import Order from '../components/agent/Order'
   import api from '../mixins/api'
+  import Store from '../mixins/store'
 
   export default class DetailPage extends wepy.page {
     config = {}
@@ -229,29 +230,9 @@
 
     data = {
       tabShow: 'orders',
-      date: this.formatDate(new Date(), 'yyyy-MM-dd'),
+      date: '全部订单',
       agent: {},
-      orders: [{
-        orderTime: 1489660515000,
-        tbItemTitle: "牧马人二代 有线游戏鼠标 笔记本台式电脑 CF LOL 电竞鼠标发光",
-        earn: "0",
-        status: "订单失效",
-        price: "0",
-        tbOrderNo: "3140661009121417",
-        pid: "mm_121759376_21550077_73734882",
-        tbItemId: 521293003827,
-        pitName: "广点通"
-      },{
-        orderTime: 1490264738000,
-        tbItemTitle: "Supecare/舒宁三档变频声波电动牙刷成人正畸牙刷软毛静音美白",
-        earn: "18.73",
-        status: "订单结算",
-        price: "49",
-        tbOrderNo: "2651874589670540",
-        pid: "mm_121759376_21550077_72230383",
-        tbItemId: 530579664057,
-        pitName: "wifi看头条"
-      },]
+      orders: []
     }
 
     computed = {}
@@ -263,12 +244,16 @@
       bindDateChange(e) {
         console.log(e.detail)
         this.date = e.detail.value
-      },
+      }
     }
 
     events = {}
 
     onLoad () {
+      console.log(this.$wxapp)
+    }
+
+    fetchWithdraw() {
 
     }
 

@@ -101,7 +101,6 @@
 
     onLoad () {
       console.info('Order 加载完成')
-      console.log(this.order)
 
     }
   }

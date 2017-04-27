@@ -27,7 +27,8 @@
     }
 
     globalData = {
-      userInfo: null
+      userInfo: null,
+      openid: null
     }
 
     constructor () {
@@ -37,8 +38,7 @@
     }
 
     onLaunch () {
-      this.testAsync()
-
+      const self = this
       wx.login({
         success: function(res) {
           if (res.code) {
@@ -46,26 +46,14 @@
             wepy.request({
               url: `https://api.weixin.qq.com/sns/jscode2session?appid=wxe8f036f43b0f951b&secret=e35dcd6ecf58d46ef5551e408d931a4e&js_code=${res.code}&grant_type=authorization_code`,
             }).then(res => {
-              console.log('', res)
+              console.log('openid', res.data.openid)
+              self.globalData.openid = res.data.openid
             })
           } else {
             console.log('获取用户登录态失败！' + res.errMsg)
           }
         }
       });
-    }
-
-    sleep (s) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // resolve('promise resolved')
-        }, s * 1000)
-      })
-    }
-
-    async testAsync () {
-      const data = await this.sleep(3)
-      console.log(data)
     }
 
     getUserInfo (cb) {

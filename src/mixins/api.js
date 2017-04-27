@@ -5,13 +5,14 @@ const wxRequest = async (params = {}, url, agentId = '') => {
     title: '加载中',
     icon: 'loading'
   })
+  console.log('api',agentId)
   let res = await wepy.request({
     url: url,
     method: params.method || 'GET',
     data: params.data || {},
     header: {
       'Content-Type': 'application/json',
-      'X-Version': '1.1',
+      'X-Version': '1.0',
       'X-AppName':'fansCoupon',
       'x-agent-app-id': agentId
     }
