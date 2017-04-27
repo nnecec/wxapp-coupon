@@ -1,0 +1,118 @@
+<style type="less">
+  @primary-color: #fe2947;
+  .order {
+    background-color: #fff;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+    &.failure{
+      .pink{
+        color: #999!important;
+      }
+      .status {
+        color: #999!important;
+      }
+    }
+    .info{
+      padding: 20rpx 0;
+      .order-image {
+        display: inline-block;
+        background-image: url('http://h5cow.oss-cn-hangzhou.aliyuncs.com/zdclock/static/media/loading.jpg');
+        background-size: cover;
+        width: 140rpx;
+        height: 140rpx;
+        .image{
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .order-info{
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 20rpx;
+        width: 530rpx;
+        .order-title {
+          font-size: 26rpx;
+          color: #666;
+          margin: 20rpx 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .order-price{
+          display: flex;
+          justify-content: space-between;
+          .text{
+            font-size: 28rpx;
+            color: #444;
+          }
+          .price{
+            font-size: 38rpx;
+          }
+          .pink{
+            color: @primary-color;
+          }
+        }
+      }
+    }
+    .time-info{
+      padding: 20rpx 0;
+      border-top: 1px solid #f5f5f5;
+      display: flex;
+      justify-content: space-between;
+      .time{
+        font-size: 26rpx;
+        color: #aaa;
+      }
+      .status{
+        font-size: 28rpx;
+        color: #333;
+      }
+    }
+
+  }
+</style>
+<template>
+  <view class="order {{order.status===1? 'failure': ''}}">
+    <view class="info">
+      <view class="order-image">
+        <image class="image" mode="aspectFill" src="{{order.picUrl}}"></image>
+      </view>
+      <view class="order-info">
+        <view class="order-title">{{order.tbItemTitle}}</view>
+        <view class="order-price">
+          <view>
+            <text class="text">订单金额：¥</text><text class="text price">{{order.price}}</text>
+          </view>
+          <view>
+            <text class="text">预估收益：<text class="pink">¥</text></text><text class="text price pink">{{order.earn}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="time-info">
+      <text class="time">{{order.orderTime}}</text>
+      <text class="status">{{order.statusText}}</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Product extends wepy.component {
+    props = {
+      order: Object
+    }
+
+    components = {}
+
+    methods = {
+
+    }
+
+    onLoad () {
+      console.info('Order 加载完成')
+
+    }
+  }
+</script>

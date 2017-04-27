@@ -180,18 +180,30 @@
           this.hotSearchList = data
           this.$apply()
         })
+
+      const self = this
+      wx.getStorage({
+        key: 'agentId',
+        success: function (res) {
+          self.agentId = res.data
+        },
+        fail: function () {
+        }
+      })
     }
 
     onShareAppMessage () {
+      let path = 'pages/search'
+      if (this.agentId) {
+        path += '?agentId=' + this.agentId
+      }
       return {
         title: '粉丝专享优惠券',
-        path: 'pages/search',
+        path: path,
         success: function(res) {
-          // 分享成功
           console.log('分享成功', res)
         },
         fail: function(res) {
-          // 分享失败
           console.log('分享失败', res)
         }
       }

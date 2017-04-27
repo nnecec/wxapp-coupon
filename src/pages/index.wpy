@@ -4,6 +4,35 @@
   .home {
     background-color: #f5f5f5;
     height: 100%;
+    .agent-enter {
+      font-size: 30rpx;
+      color: #333;
+      background-color: #fff;
+      padding: 20rpx 30rpx;
+      margin-top: 20rpx;
+      position: relative;
+      .image {
+        width: 36rpx;
+        height: 34rpx;
+        margin-right: 20rpx;
+        position: relative;
+        top: 4rpx;
+      }
+      .text {
+        line-height: 34rpx;
+      }
+      .arrow-right {
+        width: 15rpx;
+        height: 15rpx;
+        display: inline-block;
+        position: relative;
+        border-top: 1px solid #333;
+        border-right: 1px solid #333;
+        transform: rotate(45deg);
+        float: right;
+        top: 13rpx;
+      }
+    }
     .search-panel {
       background-color: @primary-color;
       text-align: center;
@@ -36,8 +65,9 @@
     <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
       <view class="search-panel">
         <image src="../images/slogen.png" class="search-slogen"></image>
-        <navigator class="search-link" url="./search"><icon type="search" class="search-icon" size="16"/>搜索心仪商品</navigator>
+        <navigator class="search-link" url="./search"><icon type="search" class="search-icon" size="16"/><text class="text">搜索心仪商品</text></navigator>
       </view>
+      <navigator url="./agent" class="agent-enter" wx:if="{{isAgent}}"><image src="../images/agent.png" class="image"></image>效果报表<text class="arrow-right"></text></navigator>
       <List :list.sync="productList"/>
     </scroll-view>
 
@@ -62,55 +92,51 @@
 
     data = {
       productList: [],
-      offset: 0
+      offset: 0,
+      agentId: '',
+      isAgent: false
     }
 
     computed = {}
 
     methods = {
-      upper (e) {
-        console.log(e)
-      },
 
-      lower (e) {
-        console.log(e)
-      },
-
-      scroll (e) {
-        console.log(e)
-      }
     }
 
     events = {}
 
     async onLoad (option) {
       this.fetchList()
-
-      wx.getUserInfo({
-        success: function(res) {
-          console.log('user info', res)
-        }
-      })
-
+      const self = this
       if (option.agentId) {
-        const agentId = option.agentId
+        this.agentId = option.agentId
         wx.setStorage({
           key: 'agentId',
-          data: agentId
+          data: option.agentId
         })
       }
+
+      wx.getStorage({
+        key: 'isAgent',
+        success: function (res) {
+          self.isAgent = res.data
+        }
+      })
     }
 
+
     onShareAppMessage () {
+      let path = 'pages/index'
+      if (this.agentId) {
+        path += '?agentId=' + this.agentId
+      }
       return {
         title: '粉丝专享优惠券',
-        path: 'pages/index',
+        path: path,
         success: function(res) {
-          // 分享成功
           console.log('分享成功', res)
         },
         fail: function(res) {
-          // 分享失败
           console.log('分享失败', res)
         }
       }
