@@ -253,7 +253,7 @@
         <text class="price-now">{{product.price}}</text>
         <text class="price-old">¥{{product.originPrice}}</text>
         <text class="price-coupon"
-              wx:if="{{product.isHasActivity}}">{{product.activityPrice}}元优惠券
+              wx:if="{{product.isHasActivity&&product.isShowCoupon}}">{{product.activityPrice}}元优惠券
         </text>
         <!--<text class="free-ship"-->
               <!--wx:if="{{product.isPinkage}}">包邮-->
@@ -266,7 +266,7 @@
 
         <text class="title">{{product.title}}</text>
         <view class="recommend"
-              wx:if="product.recommend">小编推荐:{{product.recommend}}
+              wx:if="{{product.recommend}}">小编推荐:{{product.recommend}}
         </view>
       </view>
     </view>
@@ -308,7 +308,7 @@
       </view>
     </view>
 
-    <view class="detail-footer" @tap="showTaoKey">
+    <view class="detail-footer" @tap="showTaoKey" wx:if="{{product.isShowCoupon}}">
       <image class="image"
              src="../images/detail_footer.jpg"></image>
 
@@ -357,7 +357,8 @@
       product: {},
       introShow: 'detail',
       isShowTaoKey: false,
-      taoKey: ''
+      taoKey: '',
+      id: ''
     }
 
     computed = {}
@@ -393,12 +394,30 @@
 
       console.info('详情页加载完成', option.id)
       const id = option.id
+      this.id = id
       this.fetchDetail(id)
       this.fetchTaoKey(id)
       wx.setNavigationBarTitle({
         title: '商品详情'
       })
     }
+
+    onShareAppMessage () {
+      const self = this
+      return {
+        title: '粉丝专享优惠券',
+        path: 'pages/detail?id=' + self.id,
+        success: function(res) {
+          // 分享成功
+          console.log('分享成功', res)
+        },
+        fail: function(res) {
+          // 分享失败
+          console.log('分享失败', res)
+        }
+      }
+    }
+
     async fetchDetail (id) {
       const data = JSON.stringify({
         "itemDetail": {
@@ -409,7 +428,9 @@
         }]
       })
 
-      const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+
+      const res = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
+
       console.log('详情onLoad', res)
       this.product = res.data.data.itemDetailInfoRes.data[0]
       this.$apply()
@@ -422,9 +443,29 @@
           "itemId": id
         }
       })
-      const res = await api.fetchDetail({}, 'https://adbaitai.com/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
-      console.log('淘口令',res)
-      this.taoKey = res.data.data.itemTaoKouLingRes.data.taoKouLing
+
+
+      let agentId = ''
+      const self = this
+      wx.getStorage({
+        key: 'agentId',
+        success: async function (res) {
+          agentId = res.data
+          const resTaoKey = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data), agentId)
+          self.taoKey = resTaoKey.data.data.itemTaoKouLingRes.data.taoKouLing
+          self.$apply()
+        },
+        fail: async function () {
+          const resTaoKey = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data), agentId)
+          self.taoKey = resTaoKey.data.data.itemTaoKouLingRes.data.taoKouLing
+          self.$apply()
+        }
+      })
+
+
+
     }
+
+
   }
 </script>

@@ -113,7 +113,7 @@
 
     events = {}
 
-    async onLoad () {
+    async onLoad (option) {
       this.fetchList()
 
       wx.getUserInfo({
@@ -121,6 +121,29 @@
           console.log('user info', res)
         }
       })
+
+      if (option.agentId) {
+        const agentId = option.agentId
+        wx.setStorage({
+          key: 'agentId',
+          data: agentId
+        })
+      }
+    }
+
+    onShareAppMessage () {
+      return {
+        title: '粉丝专享优惠券',
+        path: 'pages/index',
+        success: function(res) {
+          // 分享成功
+          console.log('分享成功', res)
+        },
+        fail: function(res) {
+          // 分享失败
+          console.log('分享失败', res)
+        }
+      }
     }
 
     onShareAppMessage () {
@@ -144,14 +167,12 @@
         "pageSize": 10
       })
 
-      const res = await api.fetchDetail({}, 'https://pre.adbaitai.com/public/1.0/h5/weixin/getHomePage?data=' + encodeURI(data))
+      const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/getHomePage?data=' + encodeURI(data))
       console.log('首页list', res)
       const items = res.data.data.topicRes.data[0].items
       this.productList = [...this.productList, ...items]
       this.offset += 10
       this.$apply()
-
-      console.log(this.offset)
     }
 
   }
