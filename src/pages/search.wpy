@@ -132,7 +132,8 @@
       isShowList: false,
       keyword: '',
       offset: 0,
-      isBottom: false
+      isBottom: false,
+      agentId: ''
     }
 
     computed = {}
@@ -167,7 +168,7 @@
 
     events = {}
 
-    onLoad () {
+    onLoad (option) {
       console.info('搜索页加载完成')
       this.searchHistory()
       this.isShowList = false
@@ -182,16 +183,27 @@
         })
 
       const self = this
-      wx.getStorage({
-        key: 'agentId',
-        success: function (res) {
-          self.agentId = res.data
-        },
-        fail: function () {
-        }
-      })
+
+      // 如果是从二维码带agentId进来的则设置 agentId
+      if (option.agentId) {
+        this.agentId = option.agentId
+        wx.setStorage({
+          key: 'agentId',
+          data: option.agentId
+        })
+      } else {
+        // 如果不是带二维码 则读本地缓存二维码
+        wx.getStorage({
+          key: 'agentId',
+          success: function (res) {
+            self.agentId = res.data
+          }
+        })
+      }
+
     }
 
+    // 分享页面
     onShareAppMessage () {
       let path = 'pages/search'
       if (this.agentId) {
@@ -230,7 +242,7 @@
       this.fetchSearch()
     }
 
-    // 重置搜索
+    // 重置搜索结果
     resetList() {
       this.productList = []
       this.offset = 0

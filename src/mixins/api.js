@@ -11,7 +11,7 @@ const wxRequest = async (params = {}, url, agentId = '') => {
     data: params.data || {},
     header: {
       'Content-Type': 'application/json',
-      'X-Version': '1.2',
+      'X-Version': '1.3',
       'X-AppName':'fansCoupon',
       'x-agent-app-id': agentId
     }

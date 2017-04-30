@@ -108,20 +108,32 @@
     async onLoad (option) {
       this.fetchList()
       const self = this
+      // 如果是从二维码带agentId进来的 则设置agentId
       if (option.agentId) {
         this.agentId = option.agentId
         wx.setStorage({
           key: 'agentId',
           data: option.agentId
         })
+      } else {
+        // 如果不是带二维码 则读本地缓存二维码
+        wx.getStorage({
+          key: 'agentId',
+          success: function (res) {
+            self.agentId = res.data
+          }
+        })
       }
 
+      // 获取是否是代理
       wx.getStorage({
         key: 'isAgent',
         success: function (res) {
           self.isAgent = res.data
         }
       })
+
+
     }
 
 

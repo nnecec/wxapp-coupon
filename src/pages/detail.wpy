@@ -299,7 +299,6 @@
                 item="item">
           <view class="comment">
             <view class="buyer">{{item.buyerNick}}
-
               <text class="time">{{item.createTime}}</text>
             </view>
             <view class="content">{{item.comment}}</view>
@@ -400,6 +399,23 @@
       wx.setNavigationBarTitle({
         title: '商品详情'
       })
+
+      // 如果是从二维码带agentId进来的 则设置agentId
+      if (option.agentId) {
+        this.agentId = option.agentId
+        wx.setStorage({
+          key: 'agentId',
+          data: option.agentId
+        })
+      } else {
+        // 如果不是带二维码 则读本地缓存二维码
+        wx.getStorage({
+          key: 'agentId',
+          success: function (res) {
+            self.agentId = res.data
+          }
+        })
+      }
 
       const self = this
       wx.getStorage({
