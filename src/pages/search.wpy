@@ -24,6 +24,7 @@
       font-size: 30rpx;
       border-radius: 30rpx;
       padding: 0 10rpx;
+      position: relative;
       .icon {
         width: 40rpx;
         position: relative;
@@ -34,6 +35,36 @@
         width: 520rpx;
         display: inline-block;
         margin-top: 8rpx;
+      }
+      .clear-input {
+        display: inline-block;
+        width: 35rpx;
+        height: 35rpx;
+        overflow: hidden;
+        position: absolute;
+        right: 5rpx;
+        top: 5rpx;
+        color: #fff;
+        border-radius: 50%;
+        background-color: #bbb;
+        z-index: 10;
+        margin: 10rpx;
+        &::before,
+        &::after {
+          position: absolute;
+          content: '';
+          top: 50%;
+          left: 10%;
+          background-color: #fff;
+          width: 80%;
+          height: 1rpx;
+        }
+        &::before {
+          transform: rotate(45deg);
+        }
+        &::after {
+          transform: rotate(-45deg);
+        }
       }
     }
     .button {
@@ -81,6 +112,7 @@
         <view class="input-view">
           <icon class="icon" type="search" size="14" color="#b2b2b2"/>
           <input class="input" name="keyword" placeholder="输入关键词搜索商品" bindconfirm="onConfirm" value="{{keyword}}" focus/>
+          <text class="clear-input" @tap="clearInput" wx:if="{{keyword.length>0}}"></text>
         </view>
         <button class="button" formType="submit">搜索</button>
       </form>
@@ -145,7 +177,7 @@
       clickSearch(e) {
         console.log(e)
         const keyword = e.target.dataset.value
-
+        this.keyword = ''
         this.keyword = keyword
         this.resetList()
 
@@ -164,6 +196,11 @@
             self.$apply()
           }
         })
+      },
+
+      clearInput(){
+        this.keyword = ''
+        this.isShowList = false
       }
     }
 
