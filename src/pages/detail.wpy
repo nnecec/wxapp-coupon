@@ -353,26 +353,30 @@
     }
 
     data = {
-      product: {},
-      introShow: 'detail',
-      isShowTaoKey: false,
-      taoKey: '',
-      id: '',
+      product: {}, // 详情页产品
+      introShow: 'detail', //显示哪个tab detail = 产品详情 comment = 产品评论
+      isShowTaoKey: false, // 是否显示淘口令窗口
+      taoKey: '', // 淘口令
+      id: '', // 产品id
       agentId: ''
     }
 
     computed = {}
 
     methods = {
+      // 切换tab
       toggleIntroShow(tab) {
         this.introShow = tab
       },
+      // 显示淘口令
       showTaoKey() {
         this.isShowTaoKey = true
       },
+      // 关闭淘口令
       closeTaoKey() {
         this.isShowTaoKey = false
       },
+      // 复制淘口令
       copyTaoKey() {
         wx.setClipboardData({
           data: this.taoKey,
@@ -391,24 +395,21 @@
 
     async onLoad (option) {
       this.product = {}
-
-      console.info('详情页加载完成', option.id)
-      const id = option.id
-      this.id = id
-
+      // 获取跳转中带的产品id
+      this.id = option.id
       wx.setNavigationBarTitle({
         title: '商品详情'
       })
-
+      const self = this
       // 如果是从二维码带agentId进来的 则设置agentId
       if (option.agentId) {
         this.agentId = option.agentId
         wx.setStorage({
           key: 'agentId',
-          data: option.agentId
+          data: option.agentId,
         })
       } else {
-        // 如果不是带二维码 则读本地缓存二维码
+        // 如果不是带二维码 则读本地缓存agentId
         wx.getStorage({
           key: 'agentId',
           success: function (res) {
@@ -417,19 +418,8 @@
         })
       }
 
-      const self = this
-      wx.getStorage({
-        key: 'agentId',
-        success: function (res) {
-          self.agentId = res.data
-          self.fetchTaoKey(id)
-        },
-        fail: function () {
-          self.fetchTaoKey(id)
-        }
-      })
-
-      this.fetchDetail(id)
+      this.fetchDetail(this.id)
+      this.fetchTaoKey(this.id)
     }
 
     onShareAppMessage () {
@@ -452,6 +442,7 @@
       }
     }
 
+    // 获取详情页产品信息
     async fetchDetail (id) {
       const data = JSON.stringify({
         "itemDetail": {
@@ -462,15 +453,12 @@
         }]
       })
 
-
       const res = await api.fetchDetail({}, '/1.0/h5/batch/search?appKey=zdnz&data=' + encodeURI(data))
-
-      console.log('详情onLoad', res)
       this.product = res.data.data.itemDetailInfoRes.data[0]
       this.$apply()
     }
 
-
+    // 获取淘口令
     async fetchTaoKey(id) {
       const data = JSON.stringify({
         "taoKouLing": {

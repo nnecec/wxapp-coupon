@@ -289,6 +289,10 @@
       this.offset = 0
       this.orders = []
 
+      wx.setNavigationBarTitle({
+        title: '代理统计'
+      })
+
       this.openid = this.$wxapp.$app.globalData.openid
       console.log(this.openid)
       this.fetchWithdraw()

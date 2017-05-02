@@ -52,7 +52,7 @@
       text-align: center;
       font-size: 30rpx;
       color: @grey-color;
-      .search-icon{
+      .search-icon {
         position: relative;
         top: 4rpx;
         margin-right: 20rpx;
@@ -65,9 +65,16 @@
     <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
       <view class="search-panel">
         <image src="../images/slogen.png" class="search-slogen"></image>
-        <navigator class="search-link" url="./search"><icon type="search" class="search-icon" size="16"/><text class="text">搜索心仪商品</text></navigator>
+        <navigator class="search-link" url="./search">
+          <icon type="search" class="search-icon" size="16"/>
+          <text class="text">搜索心仪商品</text>
+        </navigator>
       </view>
-      <navigator url="./agent" class="agent-enter" wx:if="{{isAgent}}"><image src="../images/agent.png" class="image"></image>效果报表<text class="arrow-right"></text></navigator>
+      <navigator url="./agent" class="agent-enter" wx:if="{{isAgent}}">
+        <image src="../images/agent.png" class="image"></image>
+        效果报表
+        <text class="arrow-right"></text>
+      </navigator>
       <List :list.sync="productList"/>
     </scroll-view>
 
@@ -79,29 +86,26 @@
 
   import api from '../mixins/api'
 
-  import SearchBar from '../components/search/SearchBar'
   import List from '../components/product/List'
 
   export default class Index extends wepy.page {
     config = {}
 
     components = {
-      SearchBar: SearchBar,
       List: List
     }
 
     data = {
-      productList: [],
+      productList: [], // 首页产品列表
       offset: 0,
       agentId: '',
-      isAgent: false
+      isAgent: false, // 是否是代理
+      isFetching: false
     }
 
     computed = {}
 
-    methods = {
-
-    }
+    methods = {}
 
     events = {}
 
@@ -116,7 +120,7 @@
           data: option.agentId
         })
       } else {
-        // 如果不是带二维码 则读本地缓存二维码
+        // 如果不是带二维码 则读本地缓存agentId
         wx.getStorage({
           key: 'agentId',
           success: function (res) {
@@ -132,40 +136,41 @@
           self.isAgent = res.data
         }
       })
-
-
     }
 
-
+    // 分享页面
     onShareAppMessage () {
       let path = 'pages/index'
-      if (this.agentId) {
+      if (this.agentId) { // 如果agentId有值 带上agentId分享
         path += '?agentId=' + this.agentId
       }
       return {
         title: '粉丝专享优惠券',
         path: path,
-        success: function(res) {
+        success: function (res) {
           console.log('分享成功', res)
         },
-        fail: function(res) {
+        fail: function (res) {
           console.log('分享失败', res)
         }
       }
     }
 
+    // 拉取首页产品列表
     async fetchList () {
       const data = JSON.stringify({
         "offset": this.offset,
         "pageSize": 10
       })
-
-      const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/getHomePage?data=' + encodeURI(data))
-      console.log('首页list', res)
-      const items = res.data.data.topicRes.data[0].items
-      this.productList = [...this.productList, ...items]
-      this.offset += 10
-      this.$apply()
+      if (!this.isFetching) {
+        this.isFetching = true
+        const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/getHomePage?data=' + encodeURI(data))
+        const items = res.data.data.topicRes.data[0].items
+        this.productList = [...this.productList, ...items]
+        this.offset += 10
+        this.isFetching = false
+        this.$apply()
+      }
     }
 
   }

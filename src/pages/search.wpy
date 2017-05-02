@@ -126,14 +126,15 @@
     }
 
     data = {
-      productList: [],
-      historyList: [],
-      hotSearchList: [],
-      isShowList: false,
-      keyword: '',
+      productList: [], // 搜索结果列表
+      historyList: [], // 搜索历史列表
+      hotSearchList: [], // 热搜词列表
+      isShowList: false, // 是否显示搜索结果
+      keyword: '', // 关键词
       offset: 0,
-      isBottom: false,
-      agentId: ''
+      isBottom: false, // 是否到搜索的最底部
+      agentId: '',
+      isFetching: false // 是否在搜索中
     }
 
     computed = {}
@@ -174,6 +175,7 @@
       this.isShowList = false
       this.resetList()
 
+      // 加载热门词
       wepy.request('https://adbaitai.com/public/1.0/h5/weixin/hot?data=')
         .then(res => {
           const data = res.data.data.hotSearch
@@ -258,7 +260,9 @@
         "pageSize": 10
       })
 
-      if (!this.isBottom) {
+      // 如果没有到列表最后一个 且 不在搜索中
+      if (!this.isBottom && !this.isFetching) {
+        this.isFetching = true
         const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/searchByKeyWord?data=' + encodeURI(data))
         const items = res.data.data.itemsByKeyRes.data
         this.productList = [...this.productList, ...items]
@@ -267,6 +271,8 @@
         if (items.length <= 0) {
           this.isBottom = true
         }
+        this.isFetching = false
+
         this.$apply()
       }
     }
@@ -275,10 +281,11 @@
     searchHistory (key) {
       const self = this
       if (key) {
+        // 如果传入新搜索key 获取缓存中的搜索历史
+        // 控制搜索历史在6个并将新的key放在第一个位置
         wx.getStorage({
           key: 'searchHistory',
           success: function (res) {
-            console.log('getStorage success', res.data)
             const history = res.data
 
             let newHistory = history.filter(value => value !== key).slice(0, 5)
@@ -291,7 +298,7 @@
             })
           },
           fail: function (res) {
-            console.log('getStorage fail', res.data)
+            // 如果缓存中没有搜索历史 则将新key设为第一个历史
             wx.setStorage({
               key: "searchHistory",
               data: [key]
@@ -299,6 +306,7 @@
           }
         })
       } else {
+        // 如果没有key传入 则为加载历史
         wx.getStorage({
           key: 'searchHistory',
           success: function (res) {
