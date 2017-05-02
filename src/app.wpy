@@ -44,11 +44,11 @@
       wx.login({
         success: function(res) {
           if (res.code) {
-            // 发起网络请求
+            // 请求openid
             wepy.request({
               url: `https://api.weixin.qq.com/sns/jscode2session?appid=wxe8f036f43b0f951b&secret=e35dcd6ecf58d46ef5551e408d931a4e&js_code=${res.code}&grant_type=authorization_code`,
             }).then(res => {
-              console.log('openid=', res.data.openid)
+              console.log('openid=', res.data.openid, self)
               self.$app.globalData.openid = res.data.openid
               self.getUserInfo(res.data.openid)
             })
@@ -59,6 +59,7 @@
       })
     }
 
+    // 获取用户数据
     async getUserInfo (openid) {
       await wepy.login();
       const resUserInfo = await wepy.getUserInfo()
@@ -70,10 +71,11 @@
       this.judgeAgent(obj)
     }
 
+    // 判断是否是代理
     async judgeAgent(userInfo) {
       const data = JSON.stringify(userInfo)
       const _agent = await api.fetchDetail({}, '/public/1.0/h5/weixin/empower?data=' + encodeURI(data))
-      this.isAgent = _agent.data.data.isAgent
+      this.isAgent = !_agent.data.data.isAgent
 
       wx.setStorage({
         key: 'isAgent',

@@ -459,6 +459,7 @@
     }
 
     // 获取淘口令
+    // 目前只有淘口令的获取接口带上了agentId
     async fetchTaoKey(id) {
       const data = JSON.stringify({
         "taoKouLing": {

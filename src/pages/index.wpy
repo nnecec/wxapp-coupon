@@ -4,6 +4,12 @@
   .home {
     background-color: #f5f5f5;
     height: 100%;
+    .no-more{
+      color: #666;
+      font-size: 30rpx;
+      text-align: center;
+      padding: 20rpx 0;
+    }
     .agent-enter {
       font-size: 30rpx;
       color: #333;
@@ -76,6 +82,9 @@
         <text class="arrow-right"></text>
       </navigator>
       <List :list.sync="productList"/>
+      <view class="no-more">
+        {{isBottom?'到底啦，看看其他的吧～':'正在加载...'}}
+      </view>
     </scroll-view>
 
   </view>
@@ -163,6 +172,7 @@
         "pageSize": 10
       })
       if (!this.isFetching) {
+        console.log('拉取下一页列表数据')
         this.isFetching = true
         const res = await api.fetchDetail({}, '/public/1.0/h5/weixin/getHomePage?data=' + encodeURI(data))
         const items = res.data.data.topicRes.data[0].items

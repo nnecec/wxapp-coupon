@@ -3,7 +3,7 @@
   .agent {
     background-color: #f5f5f5;
     height: 100%;
-    .title{
+    .title {
       font-size: 28rpx;
       color: #888;
       margin: 20rpx 0;
@@ -26,36 +26,36 @@
       }
     }
 
-    .statistical{
-      .could-withdraw{
+    .statistical {
+      .could-withdraw {
         padding: 25rpx 50rpx 60rpx;
         background-color: #f83654;
         background-image: url('../images/agent-head.jpg');
         background-size: cover;
-        .title{
+        .title {
           color: #fff;
         }
-        .price{
+        .price {
           font-size: 60rpx;
           color: #fff;
         }
       }
-      .no-withdraw{
+      .no-withdraw {
         display: flex;
         background-color: #fff;
-        .price{
+        .price {
           color: #000;
           font-size: 44rpx;
         }
-        .title{
+        .title {
           color: #bbb;
         }
-        .forecast-withdraw{
+        .forecast-withdraw {
           flex: 1;
           padding: 10rpx 50rpx 30rpx;
           border-right: 1rpx solid #e8e8e8;
         }
-        .already-withdraw{
+        .already-withdraw {
           flex: 1;
           padding: 10rpx 50rpx 30rpx;
         }
@@ -76,7 +76,7 @@
         .data {
           display: flex;
           padding: 30rpx 0 20rpx;
-          .withdraw, .order-amount{
+          .withdraw, .order-amount {
             flex: 1;
             text-align: center;
             padding-top: 10rpx;
@@ -87,31 +87,31 @@
         }
       }
 
-      .today{
-        .day-note{
+      .today {
+        .day-note {
           border-left: 6rpx solid #f83654;
         }
-        .withdraw{
-          .price{
+        .withdraw {
+          .price {
             color: #f96547;
           }
         }
-        .order-amount{
-          .price{
+        .order-amount {
+          .price {
             color: #f96547;
           }
         }
       }
 
-      .yesterday{
-        .day-note{
+      .yesterday {
+        .day-note {
           border-left: 6rpx solid #f89342;
         }
       }
     }
 
     .orders {
-      .filter{
+      .filter {
         padding: 20rpx;
         display: flex;
         justify-content: space-between;
@@ -147,12 +147,12 @@
           }
         }
       }
-      .picker{
+      .picker {
         display: inline-block;
         .date {
           font-size: 26rpx;
           color: #999;
-          .image{
+          .image {
             width: 26rpx;
             height: 26rpx;
             margin-right: 20rpx;
@@ -168,85 +168,87 @@
   <view class="agent">
     <scroll-view scroll-y="true" style="height: 100%;" bindscrolltolower="fetchList">
 
-    <view class="agent-tab">
-      <text class="tab {{tabShow=='statistical'?'active':''}}"
-            @tap="toggleTabShow('statistical')">收益统计
-      </text>
-      <text class="tab {{tabShow=='orders'?'active':''}}"
-            @tap="toggleTabShow('orders')">订单明细
-      </text>
-    </view>
-
-    <view class="statistical" wx:if="{{tabShow === 'statistical'}}">
-      <view class="could-withdraw">
-        <view class="title">可提现收益</view>
-        <view class="price">¥{{agent.canWithDraw}}</view>
+      <view class="agent-tab">
+        <text class="tab {{tabShow=='statistical'?'active':''}}"
+              @tap="toggleTabShow('statistical')">收益统计
+        </text>
+        <text class="tab {{tabShow=='orders'?'active':''}}"
+              @tap="toggleTabShow('orders')">订单明细
+        </text>
       </view>
 
-      <view class="no-withdraw">
-        <view class="forecast-withdraw">
-          <view class="title">预估收益</view>
-          <view class="price">¥{{agent.estimate}}</view>
+      <view class="statistical" wx:if="{{tabShow === 'statistical'}}">
+        <view class="could-withdraw">
+          <view class="title">可提现收益</view>
+          <view class="price">¥{{agent.canWithDraw}}</view>
         </view>
 
-        <view class="already-withdraw">
-          <view class="title">已提现收益</view>
-          <view class="price">¥{{agent.withDrawed}}</view>
-        </view>
-      </view>
-
-      <view class="today day">
-        <view class="day-title">
-          <view class="day-note">今日</view>
-        </view>
-        <view class="data">
-          <view class="withdraw">
-            <view class="price">{{agent.estimateToday}}</view>
+        <view class="no-withdraw">
+          <view class="forecast-withdraw">
             <view class="title">预估收益</view>
+            <view class="price">¥{{agent.estimate}}</view>
           </view>
-          <view class="order-amount">
-            <view class="price">{{agent.orderNumToday}}</view>
-            <view class="title">成交笔数</view>
+
+          <view class="already-withdraw">
+            <view class="title">已提现收益</view>
+            <view class="price">¥{{agent.withDrawed}}</view>
+          </view>
+        </view>
+
+        <view class="today day">
+          <view class="day-title">
+            <view class="day-note">今日</view>
+          </view>
+          <view class="data">
+            <view class="withdraw">
+              <view class="price">{{agent.estimateToday}}</view>
+              <view class="title">预估收益</view>
+            </view>
+            <view class="order-amount">
+              <view class="price">{{agent.orderNumToday}}</view>
+              <view class="title">成交笔数</view>
+            </view>
+          </view>
+        </view>
+
+        <view class="yesterday day">
+          <view class="day-title">
+            <view class="day-note">昨日</view>
+          </view>
+          <view class="data">
+            <view class="withdraw">
+              <view class="price">{{agent.estimateYesterday}}</view>
+              <view class="title">预估收益</view>
+            </view>
+            <view class="order-amount">
+              <view class="price">{{agent.orderNumYesterday}}</view>
+              <view class="title">成交笔数</view>
+            </view>
           </view>
         </view>
       </view>
 
-      <view class="yesterday day">
-        <view class="day-title">
-          <view class="day-note">昨日</view>
+
+      <view class="orders" wx:if="{{tabShow === 'orders'}}">
+        <view class="filter">
+          <text class="all-order" wx:if="{{date}}" @tap="clearDate">{{date}}
+            <text class="clear-date"></text>
+          </text>
+          <text class="all-order" wx:if="{{!date}}">全部订单</text>
+
+          <picker class="picker" bindchange="bindDateChange" mode="date" value="{{date}}">
+            <view class="date">
+              <image class="image" src="../images/calender.png"></image>
+              <text>筛选</text>
+            </view>
+          </picker>
         </view>
-        <view class="data">
-          <view class="withdraw">
-            <view class="price">{{agent.estimateYesterday}}</view>
-            <view class="title">预估收益</view>
-          </view>
-          <view class="order-amount">
-            <view class="price">{{agent.orderNumYesterday}}</view>
-            <view class="title">成交笔数</view>
-          </view>
+        <view class="order-list">
+          <repeat for="{{orders}}" key="index" index="index" item="item">
+            <Order :order.sync="item"></Order>
+          </repeat>
         </view>
       </view>
-    </view>
-
-
-    <view class="orders" wx:if="{{tabShow === 'orders'}}">
-      <view class="filter">
-        <text class="all-order" wx:if="{{date}}" @tap="clearDate">{{date}} <text class="clear-date"></text></text>
-        <text class="all-order" wx:if="{{!date}}">全部订单</text>
-
-        <picker class="picker" bindchange="bindDateChange" mode="date" value="{{date}}">
-          <view class="date">
-            <image class="image" src="../images/calender.png"></image>
-            <text>筛选</text>
-          </view>
-        </picker>
-      </view>
-      <view class="order-list">
-        <repeat for="{{orders}}" key="index" index="index" item="item">
-          <Order :order.sync="item"></Order>
-        </repeat>
-      </view>
-    </view>
     </scroll-view>
 
   </view>
@@ -266,12 +268,13 @@
     }
 
     data = {
-      tabShow: 'statistical',
-      date: '',
-      agent: {},
-      orders: [],
+      tabShow: 'statistical', // 切换tab显示 statistical = 统计 orders =
+      date: '', // 订单查看日期
+      agent: {}, // 代理统计信息
+      orders: [], // 订单列表
       offset: 0,
-      openid: ''
+      openId: '',
+      isFetching: false
     }
 
     computed = {}
@@ -293,13 +296,13 @@
         title: '代理统计'
       })
 
-      this.openid = this.$wxapp.$app.globalData.openid
-      console.log(this.openid)
+      this.openId = this.$wxapp.$app.globalData.openid
+      console.log(this)
       this.fetchWithdraw()
       this.fetchOrders()
     }
 
-    bindDateChange(e) {
+    bindDateChange (e) {
       console.log(e.detail)
       this.date = e.detail.value
       this.orders = []
@@ -307,50 +310,56 @@
       this.fetchOrders(this.date)
     }
 
-    clearDate() {
+    clearDate () {
       this.date = ''
       this.orders = []
       this.fetchOrders()
     }
 
     // 获取收益数据
-    async fetchWithdraw() {
+    async fetchWithdraw () {
       const data = JSON.stringify({
-        "openId": this.openid
+        "openId": this.openId
       })
 
       const resWithdraw = await api.fetchDetail({}, '/public/1.0/h5/weixin/earnStatistics?data=' + encodeURI(data))
-      console.log(resWithdraw)
       this.agent = resWithdraw.data.data
       this.$apply()
     }
 
-    async fetchOrders(date = ''){
+    // 获取订单数据
+    async fetchOrders (date = '') {
       const self = this
       const data = JSON.stringify({
-        "openId":this.openid,
+        "openId": this.openId,
         "startDate": date,
         "endDate": date,
         "offset": self.offset,
-        "pageSize":10
+        "pageSize": 10
       })
 
-      const resOrders = await api.fetchDetail({}, '/public/1.0/h5/weixin/orderInfoList?data=' + encodeURI(data))
-      const items = resOrders.data.data.map((value) => {
-        value.orderTime = this.formatDate(new Date(value.orderTime), 'yyyy-MM-dd')
-        return value
-      })
-      this.orders = [...this.orders, ...items]
-      this.$apply()
+      if (!this.isFetching) {
+        this.isFetching = true
+        const resOrders = await api.fetchDetail({}, '/public/1.0/h5/weixin/orderInfoList?data=' + encodeURI(data))
+        const items = resOrders.data.data.map((value) => { // 格式化毫秒数据
+          value.orderTime = this.formatDate(new Date(value.orderTime), 'yyyy-MM-dd')
+          return value
+        })
+        this.orders = [...this.orders, ...items]
+        this.isFetching = false
+        this.$apply()
+      }
+
     }
 
-    fetchList() {
+    // 滚动加载
+    fetchList () {
       console.log(this.offset)
       this.offset += 10
       this.fetchOrders()
     }
 
-    formatDate(date,fmt) {
+    formatDate (date, fmt) {
       var o = {
         "M+": date.getMonth() + 1, //月份
         "d+": date.getDate(), //日
